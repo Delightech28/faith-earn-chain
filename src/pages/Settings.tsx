@@ -2,16 +2,43 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Bell, Moon, Sun, Globe, Shield, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Settings = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const settingsOptions = [
-    { icon: Bell, label: "Notifications", description: "Manage push notifications and alerts" },
-    { icon: Moon, label: "Dark Mode", description: "Toggle between light and dark themes" },
-    { icon: Globe, label: "Language", description: "Choose your preferred language" },
-    { icon: Shield, label: "Privacy", description: "Privacy and security settings" },
-    { icon: Info, label: "About", description: "App version and information" },
+    { 
+      icon: Bell, 
+      label: t('notifications'), 
+      description: "Manage push notifications and alerts",
+      route: "/notifications"
+    },
+    { 
+      icon: Moon, 
+      label: t('darkMode'), 
+      description: "Toggle between light and dark themes",
+      route: "/dark-mode"
+    },
+    { 
+      icon: Globe, 
+      label: t('language'), 
+      description: "Choose your preferred language",
+      route: "/language"
+    },
+    { 
+      icon: Shield, 
+      label: t('privacy'), 
+      description: "Privacy and security settings",
+      route: "/privacy"
+    },
+    { 
+      icon: Info, 
+      label: t('about'), 
+      description: "App version and information",
+      route: "/about"
+    },
   ];
 
   return (
@@ -24,7 +51,7 @@ const Settings = () => {
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('settings')}</h1>
         </div>
 
         <Card>
@@ -36,6 +63,7 @@ const Settings = () => {
                   key={index}
                   variant="ghost"
                   className="w-full justify-start h-auto p-4"
+                  onClick={() => navigate(option.route)}
                 >
                   <Icon className="w-5 h-5 mr-3" />
                   <div className="text-left">

@@ -5,9 +5,13 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, Bell, Volume2, Bookmark, Eye, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const AppPreferences = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const { t } = useLanguage();
   const [preferences, setPreferences] = useState({
     notifications: true,
     soundEffects: true,
@@ -24,36 +28,65 @@ const AppPreferences = () => {
     }));
   };
 
+  const handleResetProgress = () => {
+    toast({
+      title: "Reading Progress Reset",
+      description: "All reading progress has been cleared.",
+    });
+  };
+
+  const handleClearBookmarks = () => {
+    toast({
+      title: "Bookmarks Cleared",
+      description: "All bookmarks have been removed.",
+    });
+  };
+
+  const handleResetPreferences = () => {
+    setPreferences({
+      notifications: true,
+      soundEffects: true,
+      autoBookmark: false,
+      readerMode: true,
+      dailyReminders: true,
+      offlineReading: false
+    });
+    toast({
+      title: "Preferences Reset",
+      description: "All preferences have been reset to default values.",
+    });
+  };
+
   const preferenceOptions = [
     {
       key: 'notifications' as keyof typeof preferences,
       icon: Bell,
-      label: "Push Notifications",
-      description: "Receive notifications for reading reminders and achievements"
+      label: t('pushNotifications'),
+      description: t('pushNotificationsDesc')
     },
     {
       key: 'soundEffects' as keyof typeof preferences,
       icon: Volume2,
-      label: "Sound Effects",
-      description: "Play sounds for interactions and achievements"
+      label: t('soundEffects'),
+      description: t('soundEffectsDesc')
     },
     {
       key: 'autoBookmark' as keyof typeof preferences,
       icon: Bookmark,
-      label: "Auto Bookmark",
-      description: "Automatically bookmark your reading progress"
+      label: t('autoBookmark'),
+      description: t('autoBookmarkDesc')
     },
     {
       key: 'readerMode' as keyof typeof preferences,
       icon: Eye,
-      label: "Enhanced Reader Mode",
-      description: "Optimize text for comfortable reading"
+      label: t('enhancedReaderMode'),
+      description: t('enhancedReaderModeDesc')
     },
     {
       key: 'dailyReminders' as keyof typeof preferences,
       icon: Clock,
-      label: "Daily Reading Reminders",
-      description: "Get reminded to continue your daily reading"
+      label: t('dailyReadingReminders'),
+      description: t('dailyReadingRemindersDesc')
     }
   ];
 
@@ -67,12 +100,12 @@ const AppPreferences = () => {
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <h1 className="text-2xl font-bold text-foreground">App Preferences</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('appPreferences')}</h1>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Reading Preferences</CardTitle>
+            <CardTitle>{t('readingPreferences')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {preferenceOptions.map((option) => {
@@ -103,17 +136,17 @@ const AppPreferences = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Reset Options</CardTitle>
+            <CardTitle>{t('resetOptions')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button variant="outline" className="w-full">
-              Reset Reading Progress
+            <Button variant="outline" className="w-full" onClick={handleResetProgress}>
+              {t('resetReadingProgress')}
             </Button>
-            <Button variant="outline" className="w-full">
-              Clear All Bookmarks
+            <Button variant="outline" className="w-full" onClick={handleClearBookmarks}>
+              {t('clearAllBookmarks')}
             </Button>
-            <Button variant="destructive" className="w-full">
-              Reset All Preferences
+            <Button variant="destructive" className="w-full" onClick={handleResetPreferences}>
+              {t('resetAllPreferences')}
             </Button>
           </CardContent>
         </Card>

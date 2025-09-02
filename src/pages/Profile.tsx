@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { User, Settings, BookOpen, Award, Clock, Calendar, LogOut, Edit, Sliders } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Profile = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   
   const handleLogout = () => {
     localStorage.removeItem("faithchain_user");
@@ -142,7 +144,7 @@ const Profile = () => {
               onClick={() => navigate('/settings')}
             >
               <Settings className="w-4 h-4 mr-2" />
-              Settings
+              {t('settings')}
             </Button>
             <Button 
               variant="outline" 
@@ -150,7 +152,7 @@ const Profile = () => {
               onClick={() => navigate('/edit-profile')}
             >
               <Edit className="w-4 h-4 mr-2" />
-              Edit Profile
+              {t('editProfile')}
             </Button>
             <Button 
               variant="outline" 
@@ -158,7 +160,7 @@ const Profile = () => {
               onClick={() => navigate('/app-preferences')}
             >
               <Sliders className="w-4 h-4 mr-2" />
-              App Preferences
+              {t('appPreferences')}
             </Button>
             <Button 
               variant="destructive" 
