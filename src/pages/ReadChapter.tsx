@@ -15,6 +15,118 @@ const versionNames: Record<string, string> = {
 
 // Mock Bible data for different versions
 const mockBibleData: Record<string, Record<string, any>> = {
+  "Genesis 1": {
+    KJV: {
+      reference: "Genesis 1",
+      verses: [
+        { verse: 1, text: "In the beginning God created the heaven and the earth." },
+        { verse: 2, text: "And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters." },
+        { verse: 3, text: "And God said, Let there be light: and there was light." },
+        { verse: 4, text: "And God saw the light, that it was good: and God divided the light from the darkness." },
+        { verse: 5, text: "And God called the light Day, and the darkness he called Night. And the evening and the morning were the first day." }
+      ]
+    },
+    NIV: {
+      reference: "Genesis 1",
+      verses: [
+        { verse: 1, text: "In the beginning God created the heavens and the earth." },
+        { verse: 2, text: "Now the earth was formless and empty, darkness was over the surface of the deep, and the Spirit of God was hovering over the waters." },
+        { verse: 3, text: "And God said, \"Let there be light,\" and there was light." },
+        { verse: 4, text: "God saw that the light was good, and he separated the light from the darkness." },
+        { verse: 5, text: "God called the light \"day,\" and the darkness he called \"night.\" And there was evening, and there was morning—the first day." }
+      ]
+    },
+    NKJV: {
+      reference: "Genesis 1",
+      verses: [
+        { verse: 1, text: "In the beginning God created the heavens and the earth." },
+        { verse: 2, text: "The earth was without form, and void; and darkness was on the face of the deep. And the Spirit of God was hovering over the face of the waters." },
+        { verse: 3, text: "Then God said, \"Let there be light\"; and there was light." },
+        { verse: 4, text: "And God saw the light, that it was good; and God divided the light from the darkness." },
+        { verse: 5, text: "God called the light Day, and the darkness He called Night. So the evening and the morning were the first day." }
+      ]
+    },
+    GNB: {
+      reference: "Genesis 1",
+      verses: [
+        { verse: 1, text: "In the beginning, when God created the universe," },
+        { verse: 2, text: "the earth was formless and desolate. The raging ocean that covered everything was engulfed in total darkness, and the Spirit of God was moving over the water." },
+        { verse: 3, text: "Then God commanded, \"Let there be light\"—and light appeared." },
+        { verse: 4, text: "God was pleased with what he saw. Then he separated the light from the darkness," },
+        { verse: 5, text: "and he named the light \"Day\" and the darkness \"Night.\" Evening passed and morning came—that was the first day." }
+      ]
+    },
+    NLT: {
+      reference: "Genesis 1",
+      verses: [
+        { verse: 1, text: "In the beginning God created the heavens and the earth." },
+        { verse: 2, text: "The earth was formless and empty, and darkness covered the deep waters. And the Spirit of God was hovering over the surface of the waters." },
+        { verse: 3, text: "Then God said, \"Let there be light,\" and there was light." },
+        { verse: 4, text: "And God saw that the light was good. Then he separated the light from the darkness." },
+        { verse: 5, text: "God called the light \"day\" and the darkness \"night.\" And evening passed and morning came, marking the first day." }
+      ]
+    },
+    AMP: {
+      reference: "Genesis 1",
+      verses: [
+        { verse: 1, text: "In the beginning God (Elohim) created [by forming from nothing] the heavens and the earth." },
+        { verse: 2, text: "The earth was formless and void or a waste and emptiness, and darkness was upon the face of the deep [primeval ocean that covered the unformed earth]. The Spirit of God was moving (hovering, brooding) over the face of the waters." },
+        { verse: 3, text: "And God said, \"Let there be light\"; and there was light." },
+        { verse: 4, text: "God saw that the light was good (pleasing, useful) and He affirmed and sustained it; and God separated the light from the darkness." },
+        { verse: 5, text: "And God called the light day, and the darkness He called night. And there was evening and there was morning, one day." }
+      ]
+    }
+  },
+  "Leviticus 2": {
+    KJV: {
+      reference: "Leviticus 2",
+      verses: [
+        { verse: 1, text: "And when any will offer a meat offering unto the LORD, his offering shall be of fine flour; and he shall pour oil upon it, and put frankincense thereon:" },
+        { verse: 2, text: "And he shall bring it to Aaron's sons the priests: and he shall take thereout his handful of the flour thereof, and of the oil thereof, with all the frankincense thereof; and the priest shall burn the memorial of it upon the altar, to be an offering made by fire, of a sweet savour unto the LORD:" },
+        { verse: 3, text: "And the remnant of the meat offering shall be Aaron's and his sons': it is a thing most holy of the offerings of the LORD made by fire." }
+      ]
+    },
+    NIV: {
+      reference: "Leviticus 2",
+      verses: [
+        { verse: 1, text: "\"When anyone brings a grain offering to the LORD, their offering is to be of the finest flour. They are to pour olive oil on it, put incense on it" },
+        { verse: 2, text: "and take it to Aaron's sons the priests. The priest shall take a handful of the flour and oil, together with all the incense, and burn this as a memorial portion on the altar, a food offering, an aroma pleasing to the LORD." },
+        { verse: 3, text: "The rest of the grain offering belongs to Aaron and his sons; it is a most holy part of the food offerings presented to the LORD." }
+      ]
+    },
+    NKJV: {
+      reference: "Leviticus 2",
+      verses: [
+        { verse: 1, text: "When anyone offers a grain offering to the LORD, his offering shall be of fine flour. And he shall pour oil on it, and put frankincense on it." },
+        { verse: 2, text: "He shall bring it to Aaron's sons, the priests, one of whom shall take from it his handful of fine flour and oil with all the frankincense. And the priest shall burn it as a memorial on the altar, an offering made by fire, a sweet aroma to the LORD." },
+        { verse: 3, text: "The rest of the grain offering shall be Aaron's and his sons'. It is most holy of the offerings to the LORD made by fire." }
+      ]
+    },
+    GNB: {
+      reference: "Leviticus 2",
+      verses: [
+        { verse: 1, text: "When any of you present an offering of grain to the LORD, you must first grind it into flour. You must put olive oil and incense on it" },
+        { verse: 2, text: "and bring it to the Aaronite priests. The officiating priest shall take a handful of the flour and oil and all of the incense and burn it on the altar as a token that it has all been offered to the LORD. The odor of this food offering is pleasing to the LORD." },
+        { verse: 3, text: "The rest of the grain offering belongs to Aaron and his sons; it is very holy, since it is taken from the food offered to the LORD." }
+      ]
+    },
+    NLT: {
+      reference: "Leviticus 2",
+      verses: [
+        { verse: 1, text: "\"When you present grain as an offering to the LORD, the offering must consist of choice flour. You must pour olive oil on it, sprinkle it with frankincense," },
+        { verse: 2, text: "and bring it to Aaron's sons, the priests. The priest will scoop out a handful of the flour moistened with oil, together with all the frankincense, and burn this representative portion on the altar. It is a special gift, a pleasing aroma to the LORD." },
+        { verse: 3, text: "The rest of the grain offering will then be given to Aaron and his sons. This offering will be considered most holy among the special gifts presented to the LORD." }
+      ]
+    },
+    AMP: {
+      reference: "Leviticus 2",
+      verses: [
+        { verse: 1, text: "When anyone offers a grain offering to the LORD, his offering shall be of fine flour, and he shall pour [olive] oil on it and put frankincense on it." },
+        { verse: 2, text: "He shall bring it to Aaron's sons the priests. Out of it he shall take his handful of the fine flour and the oil, with all of its frankincense, and the priest shall offer this up in smoke on the altar [to be burned] as the memorial portion of it. It is an offering by fire, a sweet and soothing aroma to the LORD." },
+        { verse: 3, text: "What is left of the grain offering belongs to Aaron and his sons; it is most holy among the offerings to the LORD by fire." }
+      ]
+    }
+  },
   "Ezekiel 18": {
     KJV: {
       reference: "Ezekiel 18",
