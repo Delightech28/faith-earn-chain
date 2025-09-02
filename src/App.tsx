@@ -9,6 +9,9 @@ import Wallet from "./pages/Wallet";
 import Leaderboard from "./pages/Leaderboard";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import Books from "./pages/Books";
+import BookChapters from "./pages/BookChapters";
+import ReadChapter from "./pages/ReadChapter";
 import BottomNavigation from "./components/BottomNavigation";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -28,6 +31,24 @@ const App = () => {
             <Route path="/bible" element={
               <ProtectedRoute>
                 <Bible />
+                <BottomNavigation />
+              </ProtectedRoute>
+            } />
+            <Route path="/books" element={
+              <ProtectedRoute>
+                <Books />
+                <BottomNavigation />
+              </ProtectedRoute>
+            } />
+            <Route path="/books/:bookName" element={
+              <ProtectedRoute>
+                <BookChapters />
+                <BottomNavigation />
+              </ProtectedRoute>
+            } />
+            <Route path="/read/:book/:chapter" element={
+              <ProtectedRoute>
+                <ReadChapter />
                 <BottomNavigation />
               </ProtectedRoute>
             } />

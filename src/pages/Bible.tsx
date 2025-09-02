@@ -1,121 +1,64 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Clock, Award } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useMediaQuery } from "react-responsive";
+import { BookOpen, FileText, Search, Heart, MessageSquare } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-const bibleVersions = {
-  KJV: "King James Version",
-  NIV: "New International Version",
-  NKJV: "New King James Version",
-  ESV: "English Standard Version"
-};
-
-const mockVerses = {
-  KJV: {
-    reference: "John 3:16",
-    text: "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life."
-  },
-  NIV: {
-    reference: "John 3:16",
-    text: "For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life."
-  },
-  NKJV: {
-    reference: "John 3:16", 
-    text: "For God so loved the world that He gave His only begotten Son, that whoever believes in Him should not perish but have everlasting life."
-  },
-  ESV: {
-    reference: "John 3:16",
-    text: "For God so loved the world, that he gave his only Son, that whoever believes in him should not perish but have eternal life."
-  }
-};
+const gridMenu = [
+  { label: "All Books", icon: BookOpen },
+  { label: "Notes", icon: FileText },
+  { label: "Search", icon: Search },
+  { label: "Favourite", icon: Heart },
+  { label: "Feedback", icon: MessageSquare },
+];
 
 const Bible = () => {
-  const [selectedVersion, setSelectedVersion] = useState<keyof typeof bibleVersions>("KJV");
-  const [readingTime, setReadingTime] = useState(0);
-  const [tokensEarned, setTokensEarned] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setReadingTime(prev => prev + 1);
-      // Earn 1 token per 60 seconds (1 minute) for demo
-      if (readingTime > 0 && readingTime % 60 === 0) {
-        setTokensEarned(prev => prev + 1);
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [readingTime]);
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
+  const isMobile = useMediaQuery({ maxWidth: 600 });
+  const navigate = useNavigate();
+  // Redirect or block desktop view
+  if (!isMobile) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="text-center">
+          <h2 className="text-xl font-bold mb-2">Mobile Only</h2>
+          <p className="text-muted-foreground">This page is only accessible on mobile devices.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-background p-4 pb-20">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header with stats */}
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-foreground">Bible Study</h1>
-          <div className="flex gap-3">
-            <Badge variant="secondary" className="flex items-center gap-1">
-              <Clock className="w-4 h-4" />
-              {formatTime(readingTime)}
-            </Badge>
-            <Badge variant="default" className="flex items-center gap-1">
-              <Award className="w-4 h-4" />
-              {tokensEarned} Tokens
-            </Badge>
-          </div>
+    <div className="min-h-screen bg-gradient-to-b from-[#2d0b0b] to-[#fff] p-0 pb-20">
+      {/* Header */}
+      <div className="px-4 pt-8 pb-4">
+        <div className="rounded-xl bg-gradient-to-r from-[#a91d1d] to-[#d43f3f] p-6 text-white min-h-[110px] flex flex-col justify-center">
+          <div className="font-semibold text-xl">Hello, Good Night,</div>
+          <div className="text-base mt-2">The Bible is a manual for life; read it to understand the Creator's instructions.</div>
         </div>
-
-        {/* Version selector */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Select Bible Version</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Select value={selectedVersion} onValueChange={(value: keyof typeof bibleVersions) => setSelectedVersion(value)}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Choose a Bible version" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(bibleVersions).map(([key, name]) => (
-                  <SelectItem key={key} value={key}>
-                    {key} - {name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </CardContent>
-        </Card>
-
-        {/* Bible verse display */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl text-primary">
-              {mockVerses[selectedVersion].reference} ({selectedVersion})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-lg leading-relaxed text-foreground">
-              {mockVerses[selectedVersion].text}
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Daily verse suggestion */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Daily Suggestion</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-2">Today's recommended reading:</p>
-            <p className="font-medium">Psalm 23 - The Lord is my shepherd</p>
-          </CardContent>
-        </Card>
+      </div>
+      {/* Grid Menu */}
+      <div className="px-4 mt-2">
+        <div className="grid grid-cols-3 gap-4">
+          {gridMenu.map((item, idx) => (
+            <div
+              key={item.label}
+              className="flex flex-col items-center justify-center py-8 rounded-lg bg-white shadow-sm cursor-pointer min-h-[110px]"
+              onClick={() => item.label === "All Books" && navigate("/books")}
+            >
+              <item.icon className="w-7 h-7 text-red-500 mb-2" />
+              <span className="text-xs font-semibold text-gray-700">{item.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Verse of the Day */}
+      <div className="px-4 mt-6">
+        <div className="rounded-xl bg-white p-4 shadow">
+          <div className="font-bold text-center text-lg mb-2">Verse Of the Day</div>
+          <div className="text-center text-sm mb-2">
+            "The Lord is my strength and my defense; he has become my salvation. He is my God, and I will praise him, my father's God, and I will exalt him."
+          </div>
+          <div className="text-center text-xs text-red-500 font-semibold">Exodus 15 : 2</div>
+        </div>
       </div>
     </div>
   );
