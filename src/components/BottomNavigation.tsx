@@ -17,7 +17,7 @@ const BottomNavigation = () => {
       <div className="relative flex items-center justify-between px-2 py-2 h-full">
         {/* Left items */}
         <div className="flex flex-1 justify-evenly">
-          <NavLink to="/" className={({isActive}) => `flex flex-col items-center text-center ${isActive ? 'text-red-600' : 'text-white'} w-16`}>
+          <NavLink to="/bible" className={({isActive}) => `flex flex-col items-center text-center ${isActive ? 'text-red-600' : 'text-white'} w-16`}>
             <Home className="w-6 h-6 mb-1" />
             <span className="text-xs">Home</span>
           </NavLink>

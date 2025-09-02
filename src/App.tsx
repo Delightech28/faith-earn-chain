@@ -8,6 +8,9 @@ import Bible from "./pages/Bible";
 import Wallet from "./pages/Wallet";
 import Leaderboard from "./pages/Leaderboard";
 import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
+import EditProfile from "./pages/EditProfile";
+import AppPreferences from "./pages/AppPreferences";
 import NotFound from "./pages/NotFound";
 import Books from "./pages/Books";
 import BookChapters from "./pages/BookChapters";
@@ -67,6 +70,24 @@ const App = () => {
             <Route path="/profile" element={
               <ProtectedRoute>
                 <Profile />
+                <BottomNavigation />
+              </ProtectedRoute>
+            } />
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <Settings />
+                <BottomNavigation />
+              </ProtectedRoute>
+            } />
+            <Route path="/edit-profile" element={
+              <ProtectedRoute>
+                <EditProfile />
+                <BottomNavigation />
+              </ProtectedRoute>
+            } />
+            <Route path="/app-preferences" element={
+              <ProtectedRoute>
+                <AppPreferences />
                 <BottomNavigation />
               </ProtectedRoute>
             } />

@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Wallet as WalletIcon, TrendingUp, Send, Download } from "lucide-react";
+import { Wallet as WalletIcon, TrendingUp, Send, Download, Copy } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const mockTransactions = [
   { id: 1, type: "earned", amount: 5, description: "Bible reading - 50 minutes", date: "2024-01-15" },
@@ -13,6 +14,15 @@ const mockTransactions = [
 const Wallet = () => {
   const totalBalance = 47;
   const totalEarned = 156;
+  const { toast } = useToast();
+
+  const handleCopyAddress = () => {
+    navigator.clipboard.writeText("0x1234567890abcdef1234567890abcdef12345678");
+    toast({
+      description: "Wallet address copied to clipboard!",
+      duration: 2000,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background p-4 pb-20">
@@ -102,8 +112,15 @@ const Wallet = () => {
             <CardTitle>Wallet Address</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="p-3 bg-muted rounded-lg">
-              <p className="font-mono text-sm break-all">0x1234567890abcdef1234567890abcdef12345678</p>
+            <div className="p-3 bg-muted rounded-lg flex items-center justify-between gap-3">
+              <p className="font-mono text-sm break-all flex-1">0x1234567890abcdef1234567890abcdef12345678</p>
+              <button
+                onClick={handleCopyAddress}
+                className="p-2 hover:bg-accent rounded-md transition-colors flex-shrink-0"
+                title="Copy address"
+              >
+                <Copy className="w-4 h-4" />
+              </button>
             </div>
             <p className="text-sm text-muted-foreground mt-2">
               This is your auto-generated wallet address for receiving tokens.

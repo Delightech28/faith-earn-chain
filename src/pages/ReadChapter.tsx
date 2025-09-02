@@ -210,6 +210,9 @@ const ReadChapter = () => {
   const [highlights, setHighlights] = useState<Set<number>>(new Set());
   const [backgrounds, setBackgrounds] = useState<Set<number>>(new Set());
   const [notes, setNotes] = useState<Record<number, string>>({});
+  const [favorites, setFavorites] = useState<Set<number>>(new Set());
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   type Verse = {
     book_id: string;
     book_name: string;
@@ -333,12 +336,33 @@ const ReadChapter = () => {
             <button className="p-2 hover:bg-accent rounded-full transition-colors">
               <BookOpen className="w-5 h-5" />
             </button>
-            <button className="p-2 hover:bg-accent rounded-full transition-colors">
+            <button 
+              className="p-2 hover:bg-accent rounded-full transition-colors"
+              onClick={() => setSearchOpen(!searchOpen)}
+            >
               <Search className="w-5 h-5" />
             </button>
             <button className="p-2 hover:bg-accent rounded-full transition-colors">
               <Settings className="w-5 h-5" />
             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Search Dropdown */}
+      <div className={`bg-card border-b transition-all duration-300 ease-in-out overflow-hidden ${
+        searchOpen ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'
+      }`}>
+        <div className="px-4 py-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search in this chapter..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            />
           </div>
         </div>
       </div>
@@ -465,10 +489,22 @@ const ReadChapter = () => {
                       className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-accent rounded flex-shrink-0"
                       onClick={(e) => {
                         e.stopPropagation();
-                        console.log('Heart clicked for verse', verse.verse);
+                        setFavorites(prev => {
+                          const newFavorites = new Set(prev);
+                          if (newFavorites.has(verse.verse)) {
+                            newFavorites.delete(verse.verse);
+                          } else {
+                            newFavorites.add(verse.verse);
+                          }
+                          return newFavorites;
+                        });
                       }}
                     >
-                      <Heart className="w-4 h-4 text-muted-foreground" />
+                      <Heart className={`w-4 h-4 transition-colors ${
+                        favorites.has(verse.verse) 
+                          ? 'text-red-500 fill-red-500' 
+                          : 'text-muted-foreground hover:text-red-400'
+                      }`} />
                     </button>
                   </div>
                 </div>

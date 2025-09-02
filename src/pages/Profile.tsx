@@ -1,9 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { User, Settings, BookOpen, Award, Clock, Calendar, LogOut } from "lucide-react";
+import { User, Settings, BookOpen, Award, Clock, Calendar, LogOut, Edit, Sliders } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
+  const navigate = useNavigate();
+  
   const handleLogout = () => {
     localStorage.removeItem("faithchain_user");
     window.location.href = "/";
@@ -133,12 +136,28 @@ const Profile = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button variant="outline" className="w-full justify-start">
-              <User className="w-4 h-4 mr-2" />
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => navigate('/settings')}
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              Settings
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => navigate('/edit-profile')}
+            >
+              <Edit className="w-4 h-4 mr-2" />
               Edit Profile
             </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <Settings className="w-4 h-4 mr-2" />
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => navigate('/app-preferences')}
+            >
+              <Sliders className="w-4 h-4 mr-2" />
               App Preferences
             </Button>
             <Button 
