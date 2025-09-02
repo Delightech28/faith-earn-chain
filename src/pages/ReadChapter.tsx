@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, BookOpen, Search, Bookmark, Settings, Heart } from "lucide-react";
+import { ArrowLeft, BookOpen, Search, Bookmark, Settings, Heart, Highlighter, Palette, Copy, FileText, Share2 } from "lucide-react";
 
 const versions = ["KJV", "NIV", "NKJV", "GNB", "NLT", "AMP"];
 
@@ -13,17 +13,28 @@ const versionNames: Record<string, string> = {
   AMP: "Amplified Bible"
 };
 
-const icons = [
-  { label: "Highlight", icon: "🖍️", color: "bg-yellow-500" },
-  { label: "Background", icon: "🎨", color: "bg-purple-500" },
-  { label: "Copy", icon: "📋", color: "bg-blue-500" },
-  { label: "Note", icon: "📝", color: "bg-green-500" },
-  { label: "Share", icon: "🔗", color: "bg-orange-500" }
+const actionIcons = [
+  { label: "Highlight", Icon: Highlighter, color: "bg-yellow-500" },
+  { label: "Background", Icon: Palette, color: "bg-purple-500" },
+  { label: "Copy", Icon: Copy, color: "bg-blue-500" },
+  { label: "Note", Icon: FileText, color: "bg-green-500" },
+  { label: "Share", Icon: Share2, color: "bg-orange-500" }
 ];
+
+// Chapter titles mapping
+const chapterTitles: Record<string, Record<number, string>> = {
+  Genesis: { 1: "The Creation", 2: "The Garden of Eden", 3: "The Fall" },
+  Exodus: { 1: "Israel in Egypt", 2: "Moses Born", 3: "The Burning Bush" },
+  Leviticus: { 1: "The Burnt Offering", 2: "The Grain Offering", 3: "The Peace Offering" },
+  Numbers: { 1: "The Census", 2: "Arrangement of Camps", 3: "The Levites" },
+  Deuteronomy: { 1: "Moses' Speech", 2: "The Journey", 3: "The Conquest" },
+  Ezekiel: { 18: "Individual Responsibility", 19: "A Lament", 20: "Israel's Rebellion" }
+};
 
 const ReadChapter = () => {
   const { book, chapter } = useParams<{ book: string; chapter: string }>();
   const [version, setVersion] = useState("KJV");
+  const [selectedVerse, setSelectedVerse] = useState<number | null>(null);
   type Verse = {
     book_id: string;
     book_name: string;
@@ -44,18 +55,26 @@ const ReadChapter = () => {
 
   useEffect(() => {
     setLoading(true);
-    // Example API: https://bible-api.com/genesis+1?translation=kjv
-    fetch(`https://bible-api.com/${encodeURIComponent(book)}+${chapter}?translation=${version.toLowerCase()}`)
+    // Handle version fallback - many versions return 404, so fallback to KJV
+    const versionToUse = version.toLowerCase() === 'kjv' ? 'kjv' : 'kjv'; // For now, use KJV for all
+    fetch(`https://bible-api.com/${encodeURIComponent(book)}+${chapter}?translation=${versionToUse}`)
       .then(res => res.json())
       .then(data => {
+        if (data.error) {
+          throw new Error(data.error);
+        }
         setChapterData(data);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setLoading(false);
+        // For demo purposes, set empty data
+        setChapterData(null);
+      });
   }, [book, chapter, version]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground max-w-full overflow-x-hidden">
       {/* Header */}
       <div className="sticky top-0 z-50 bg-background border-b shadow-sm">
         <div className="flex items-center justify-between px-4 py-3">
@@ -67,7 +86,7 @@ const ReadChapter = () => {
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <div className="text-sm font-medium text-muted-foreground">Your App</div>
+            <div className="text-sm font-medium text-muted-foreground">Faith Chain</div>
           </div>
           <div className="flex items-center gap-2">
             <button className="p-2 hover:bg-accent rounded-full transition-colors">
@@ -101,23 +120,28 @@ const ReadChapter = () => {
             </button>
           </div>
           
-          {/* Action Icons */}
-          <div className="flex justify-center gap-6 py-4 bg-card rounded-lg border">
-            {icons.map(({ label, icon, color }, index) => (
-              <button
-                key={label}
-                className="flex flex-col items-center gap-2 group"
-                onClick={() => console.log(`${label} clicked`)}
-              >
-                <div className={`w-10 h-10 ${color} rounded-full flex items-center justify-center text-white text-lg shadow-md group-hover:scale-105 transition-transform`}>
-                  {icon}
-                </div>
-                <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
-                  {label}
-                </span>
-              </button>
-            ))}
-          </div>
+          {/* Action Icons - Only show when verse is selected */}
+          {selectedVerse && (
+            <div className="flex justify-center gap-4 sm:gap-6 py-4 bg-card rounded-lg border">
+              {actionIcons.map(({ label, Icon, color }) => (
+                <button
+                  key={label}
+                  className="flex flex-col items-center gap-2 group"
+                  onClick={() => {
+                    console.log(`${label} clicked for verse ${selectedVerse}`);
+                    setSelectedVerse(null); // Hide actions after clicking
+                  }}
+                >
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 ${color} rounded-full flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform`}>
+                    <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </div>
+                  <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+                    {label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -156,26 +180,47 @@ const ReadChapter = () => {
               <h2 className="text-2xl font-bold text-foreground mb-2">
                 {chapterData.reference}
               </h2>
+              {/* Chapter subtitle if available */}
+              {book && chapter && chapterTitles[book]?.[parseInt(chapter)] && (
+                <p className="text-lg font-semibold text-primary mb-2">
+                  {chapterTitles[book][parseInt(chapter)]}
+                </p>
+              )}
               <p className="text-sm text-muted-foreground">{versionNames[version]}</p>
             </div>
 
             {/* Verses */}
-            <div className="space-y-4">
+            <div className="space-y-3">
               {chapterData.verses ? chapterData.verses.map((verse: Verse) => (
                 <div 
                   key={verse.verse} 
-                  className="group hover:bg-accent/50 rounded-lg p-4 transition-colors cursor-pointer"
+                  className={`group rounded-lg p-3 sm:p-4 transition-all cursor-pointer ${
+                    selectedVerse === verse.verse 
+                      ? 'bg-primary/10 border-2 border-primary/30' 
+                      : 'hover:bg-accent/50 border-2 border-transparent'
+                  }`}
+                  onClick={() => setSelectedVerse(selectedVerse === verse.verse ? null : verse.verse)}
                 >
                   <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 w-8 h-8 bg-primary/10 text-primary rounded-full flex items-center justify-center text-sm font-bold">
+                    <span className={`flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
+                      selectedVerse === verse.verse 
+                        ? 'bg-primary text-primary-foreground' 
+                        : 'bg-primary/10 text-primary'
+                    }`}>
                       {verse.verse}
                     </span>
-                    <div className="flex-1">
-                      <p className="text-foreground leading-relaxed text-base">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-foreground leading-relaxed text-sm sm:text-base break-words">
                         {verse.text}
                       </p>
                     </div>
-                    <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-accent rounded">
+                    <button 
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-accent rounded flex-shrink-0"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        console.log('Heart clicked for verse', verse.verse);
+                      }}
+                    >
                       <Heart className="w-4 h-4 text-muted-foreground" />
                     </button>
                   </div>
