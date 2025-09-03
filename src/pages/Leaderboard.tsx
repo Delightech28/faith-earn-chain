@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Medal, Award, Clock, BookOpen } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const mockLeaderboard = [
   { rank: 1, name: "Sarah Johnson", readingTime: 1250, tokensEarned: 125, avatar: "SJ" },
@@ -21,12 +22,13 @@ const getRankIcon = (rank: number) => {
 };
 
 const Leaderboard = () => {
+  const { t } = useLanguage();
   const currentUserRank = mockLeaderboard.find(user => user.isCurrentUser);
 
   return (
     <div className="min-h-screen bg-background p-4 pb-20">
       <div className="max-w-4xl mx-auto space-y-6">
-        <h1 className="text-2xl font-bold text-foreground">Leaderboard</h1>
+        <h1 className="text-2xl font-bold text-foreground">{t('leaderboard')}</h1>
 
         {/* Current User Stats */}
         {currentUserRank && (
@@ -34,7 +36,7 @@ const Leaderboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Trophy className="w-5 h-5 text-primary" />
-                Your Rank
+                {t('yourRank')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -65,7 +67,7 @@ const Leaderboard = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BookOpen className="w-5 h-5" />
-              Top Readers This Month
+              {t('topReadersThisMonth')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -103,7 +105,7 @@ const Leaderboard = () => {
                 
                 {user.rank <= 3 && (
                   <Badge variant={user.rank === 1 ? "default" : "secondary"}>
-                    {user.rank === 1 ? "Champion" : user.rank === 2 ? "Runner-up" : "Third Place"}
+                    {user.rank === 1 ? t('champion') : user.rank === 2 ? t('runnerUp') : t('thirdPlace')}
                   </Badge>
                 )}
               </div>
@@ -114,19 +116,19 @@ const Leaderboard = () => {
         {/* Weekly Challenges */}
         <Card>
           <CardHeader>
-            <CardTitle>Weekly Challenge</CardTitle>
+            <CardTitle>{t('weeklyChallenge')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               <div className="p-3 border rounded-lg">
-                <h3 className="font-semibold">Read for 7 Hours This Week</h3>
+                <h3 className="font-semibold">{t('readFor7Hours')}</h3>
                 <div className="mt-2">
                   <div className="w-full bg-muted rounded-full h-2">
                     <div className="bg-primary h-2 rounded-full" style={{ width: "65%" }}></div>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">4.5/7 hours completed</p>
+                  <p className="text-sm text-muted-foreground mt-1">4.5/7 {t('hoursCompleted')}</p>
                 </div>
-                <Badge className="mt-2">+50 FC Bonus</Badge>
+                <Badge className="mt-2">+50 {t('fcBonus')}</Badge>
               </div>
             </div>
           </CardContent>

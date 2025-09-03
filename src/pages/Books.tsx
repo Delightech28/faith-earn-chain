@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const oldTestament = [
   "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel", "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles", "Ezra", "Nehemiah", "Esther", "Job", "Psalm", "Proverbs", "Ecclesiastes", "Song of Solomon", "Isaiah", "Jeremiah", "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos", "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk", "Zephaniah", "Haggai", "Zechariah", "Malachi"
@@ -11,14 +12,14 @@ const newTestament = [
 
 const Books = () => {
   const [tab, setTab] = useState<'old' | 'new'>('old');
-
+  const { t } = useLanguage();
   const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-[#f7f7fa] pb-20">
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4 pb-2 shadow-md bg-white">
         <button onClick={() => window.history.back()} className="text-3xl font-bold text-gray-700">&#8592;</button>
-        <div className="font-bold text-xl text-gray-900">Books</div>
+        <div className="font-bold text-xl text-gray-900">{t('books')}</div>
         <div className="w-8 h-8" />
       </div>
       {/* Tabs */}
@@ -27,13 +28,13 @@ const Books = () => {
           className={`text-base font-semibold pb-1 border-b-2 ${tab === 'old' ? 'border-red-500 text-red-600' : 'border-transparent text-gray-400'}`}
           onClick={() => setTab('old')}
         >
-          Old Testament
+          {t('oldTestament')}
         </button>
         <button
           className={`text-base font-semibold pb-1 border-b-2 ${tab === 'new' ? 'border-red-500 text-red-600' : 'border-transparent text-gray-400'}`}
           onClick={() => setTab('new')}
         >
-          New Testament
+          {t('newTestament')}
         </button>
       </div>
       {/* Books List */}

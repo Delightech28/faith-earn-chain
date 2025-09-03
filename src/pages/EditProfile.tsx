@@ -38,9 +38,13 @@ const EditProfile = () => {
   );
 
   const handleSave = () => {
+    // Play save sound
+    const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmQdBjaM0+7MeSUIJXPE6+OHNwgZY7zs550NBBMApddSuSU');
+    audio.play().catch(() => {}); // Ignore any errors
+    
     // Save profile logic here
     toast({
-      title: "Success!",
+      title: t('success'),
       description: t('profileUpdated'),
     });
     navigate(-1);
@@ -121,13 +125,13 @@ const EditProfile = () => {
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal pl-10",
-                        !profile.dateOfBirth && "text-muted-foreground"
-                      )}
+        className={cn(
+          "w-full justify-start text-left font-normal",
+          !profile.dateOfBirth && "text-muted-foreground"
+        )}
                     >
-                      <CalendarIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      {profile.dateOfBirth ? format(profile.dateOfBirth, "PPP") : "Pick a date"}
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {profile.dateOfBirth ? format(profile.dateOfBirth, "PPP") : t('pickDate')}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">

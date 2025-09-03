@@ -23,16 +23,15 @@ const AboutPage = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>FaithChain Bible App</CardTitle>
+            <CardTitle>{t('faithChainBibleApp')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Version:</span>
+              <span className="text-sm text-muted-foreground">{t('version')}:</span>
               <Badge variant="secondary">1.2.0</Badge>
             </div>
             <p className="text-muted-foreground">
-              FaithChain is a revolutionary Bible reading app that combines spiritual growth with blockchain rewards. 
-              Read, learn, and earn while deepening your faith journey.
+              {t('appDescription')}
             </p>
           </CardContent>
         </Card>
@@ -49,27 +48,27 @@ const AboutPage = () => {
               <div className="flex items-start gap-3">
                 <Star className="w-5 h-5 text-yellow-500 mt-0.5" />
                 <div>
-                  <h4 className="font-medium">Daily Reading Rewards</h4>
+                  <h4 className="font-medium">{t('dailyReadingRewards')}</h4>
                   <p className="text-sm text-muted-foreground">
-                    Earn 10-50 FAITH tokens for completing daily Bible reading sessions
+                    {t('earnTokensDescription')}
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <Gift className="w-5 h-5 text-green-500 mt-0.5" />
                 <div>
-                  <h4 className="font-medium">Chapter Completion</h4>
+                  <h4 className="font-medium">{t('chapterCompletion')}</h4>
                   <p className="text-sm text-muted-foreground">
-                    Get bonus tokens for finishing complete chapters and books
+                    {t('bonusTokensDescription')}
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <Target className="w-5 h-5 text-blue-500 mt-0.5" />
                 <div>
-                  <h4 className="font-medium">Streak Bonuses</h4>
+                  <h4 className="font-medium">{t('streakBonuses')}</h4>
                   <p className="text-sm text-muted-foreground">
-                    Maintain reading streaks for multiplied rewards up to 5x
+                    {t('streakDescription')}
                   </p>
                 </div>
               </div>
@@ -117,46 +116,46 @@ const AboutPage = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground">
-              The leaderboard showcases the most dedicated readers in our community. Rankings are based on:
+              {t('leaderboardDescription')}
             </p>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm">Total Reading Time</span>
-                <span className="text-sm text-muted-foreground">40% weight</span>
+                <span className="text-sm">{t('totalReadingTime')}</span>
+                <span className="text-sm text-muted-foreground">40% {t('weight')}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm">Chapters Completed</span>
-                <span className="text-sm text-muted-foreground">30% weight</span>
+                <span className="text-sm">{t('chaptersCompleted')}</span>
+                <span className="text-sm text-muted-foreground">30% {t('weight')}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm">Reading Streak</span>
-                <span className="text-sm text-muted-foreground">20% weight</span>
+                <span className="text-sm">{t('readingStreak')}</span>
+                <span className="text-sm text-muted-foreground">20% {t('weight')}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm">Community Engagement</span>
-                <span className="text-sm text-muted-foreground">10% weight</span>
+                <span className="text-sm">{t('communityEngagement')}</span>
+                <span className="text-sm text-muted-foreground">10% {t('weight')}</span>
               </div>
             </div>
             <div className="mt-4 p-3 bg-primary/10 rounded-lg">
-              <p className="text-sm font-medium">Monthly Rewards</p>
-              <p className="text-sm text-muted-foreground">Top 10 users receive bonus FAITH tokens and exclusive badges!</p>
+              <p className="text-sm font-medium">{t('monthlyRewards')}</p>
+              <p className="text-sm text-muted-foreground">{t('monthlyRewardsDescription')}</p>
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Contact & Support</CardTitle>
+            <CardTitle>{t('contactSupport')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <p className="text-sm">
-              <span className="font-medium">Email:</span> support@faithchain.app
+              <span className="font-medium">{t('email')}:</span> support@faithchain.app
             </p>
             <p className="text-sm">
-              <span className="font-medium">Website:</span> www.faithchain.app
+              <span className="font-medium">{t('website')}:</span> www.faithchain.app
             </p>
             <p className="text-sm">
-              <span className="font-medium">Community:</span> Join our Discord server for support and fellowship
+              <span className="font-medium">{t('community')}:</span> {t('joinDiscord')}
             </p>
           </CardContent>
         </Card>
