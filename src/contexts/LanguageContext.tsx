@@ -197,6 +197,198 @@ const translations = {
     autoBookmarkDesc: 'Marcar automáticamente tu progreso de lectura',
     enhancedReaderModeDesc: 'Optimizar texto para lectura cómoda',
     dailyReadingRemindersDesc: 'Recibe recordatorios para continuar tu lectura diaria'
+  },
+  
+  ar: {
+    // Navigation
+    home: 'الرئيسية',
+    bible: 'الكتاب المقدس',
+    leaderboard: 'المتصدرين',
+    wallet: 'المحفظة',
+    profile: 'الملف الشخصي',
+    
+    // Settings
+    settings: 'الإعدادات',
+    notifications: 'الإشعارات',
+    darkMode: 'الوضع المظلم',
+    language: 'اللغة',
+    privacy: 'الخصوصية',
+    about: 'حول',
+    
+    // Profile
+    editProfile: 'تعديل الملف الشخصي',
+    appPreferences: 'تفضيلات التطبيق',
+    personalInfo: 'المعلومات الشخصية',
+    fullName: 'الاسم الكامل',
+    emailAddress: 'عنوان البريد الإلكتروني',
+    dateOfBirth: 'تاريخ الميلاد',
+    location: 'الموقع',
+    saveChanges: 'حفظ التغييرات',
+    cancel: 'إلغاء',
+    changePhoto: 'تغيير الصورة',
+    
+    // App Preferences
+    readingPreferences: 'تفضيلات القراءة',
+    pushNotifications: 'الإشعارات الفورية',
+    soundEffects: 'التأثيرات الصوتية',
+    autoBookmark: 'إشارة مرجعية تلقائية',
+    enhancedReaderMode: 'وضع القراءة المحسن',
+    dailyReadingReminders: 'تذكيرات القراءة اليومية',
+    resetOptions: 'خيارات إعادة التعيين',
+    resetReadingProgress: 'إعادة تعيين تقدم القراءة',
+    clearAllBookmarks: 'مسح جميع الإشارات المرجعية',
+    resetAllPreferences: 'إعادة تعيين جميع التفضيلات',
+    
+    // Notifications
+    notificationSettings: 'إعدادات الإشعارات',
+    readingReminders: 'تذكيرات القراءة',
+    achievements: 'الإنجازات',
+    weeklyDigest: 'الملخص الأسبوعي',
+    
+    // About
+    appVersion: 'إصدار التطبيق',
+    rewardSystem: 'نظام المكافآت',
+    howToEarn: 'كيفية الكسب',
+    leaderboardInfo: 'معلومات المتصدرين',
+    
+    // Success messages
+    profileUpdated: 'تم تحديث الملف الشخصي بنجاح!',
+    addressCopied: 'تم نسخ العنوان إلى الحافظة!',
+    
+    // Descriptions
+    pushNotificationsDesc: 'تلقي إشعارات للتذكيرات القراءة والإنجازات',
+    soundEffectsDesc: 'تشغيل الأصوات للتفاعلات والإنجازات',
+    autoBookmarkDesc: 'وضع إشارة مرجعية تلقائية لتقدم القراءة',
+    enhancedReaderModeDesc: 'تحسين النص للقراءة المريحة',
+    dailyReadingRemindersDesc: 'احصل على تذكيرات لمتابعة قراءتك اليومية'
+  },
+  
+  zh: {
+    // Navigation
+    home: '首页',
+    bible: '圣经',
+    leaderboard: '排行榜',
+    wallet: '钱包',
+    profile: '个人资料',
+    
+    // Settings
+    settings: '设置',
+    notifications: '通知',
+    darkMode: '深色模式',
+    language: '语言',
+    privacy: '隐私',
+    about: '关于',
+    
+    // Profile
+    editProfile: '编辑个人资料',
+    appPreferences: '应用偏好',
+    personalInfo: '个人信息',
+    fullName: '全名',
+    emailAddress: '电子邮件地址',
+    dateOfBirth: '出生日期',
+    location: '位置',
+    saveChanges: '保存更改',
+    cancel: '取消',
+    changePhoto: '更改照片',
+    
+    // App Preferences
+    readingPreferences: '阅读偏好',
+    pushNotifications: '推送通知',
+    soundEffects: '音效',
+    autoBookmark: '自动书签',
+    enhancedReaderMode: '增强阅读模式',
+    dailyReadingReminders: '每日阅读提醒',
+    resetOptions: '重置选项',
+    resetReadingProgress: '重置阅读进度',
+    clearAllBookmarks: '清除所有书签',
+    resetAllPreferences: '重置所有偏好',
+    
+    // Notifications
+    notificationSettings: '通知设置',
+    readingReminders: '阅读提醒',
+    achievements: '成就',
+    weeklyDigest: '每周摘要',
+    
+    // About
+    appVersion: '应用版本',
+    rewardSystem: '奖励系统',
+    howToEarn: '如何赚取',
+    leaderboardInfo: '排行榜信息',
+    
+    // Success messages
+    profileUpdated: '个人资料更新成功！',
+    addressCopied: '地址已复制到剪贴板！',
+    
+    // Descriptions
+    pushNotificationsDesc: '接收阅读提醒和成就通知',
+    soundEffectsDesc: '为交互和成就播放声音',
+    autoBookmarkDesc: '自动标记您的阅读进度',
+    enhancedReaderModeDesc: '优化文本以便舒适阅读',
+    dailyReadingRemindersDesc: '获取提醒以继续您的每日阅读'
+  },
+  
+  pt: {
+    // Navigation
+    home: 'Início',
+    bible: 'Bíblia',
+    leaderboard: 'Classificação',
+    wallet: 'Carteira',
+    profile: 'Perfil',
+    
+    // Settings
+    settings: 'Configurações',
+    notifications: 'Notificações',
+    darkMode: 'Modo Escuro',
+    language: 'Idioma',
+    privacy: 'Privacidade',
+    about: 'Sobre',
+    
+    // Profile
+    editProfile: 'Editar Perfil',
+    appPreferences: 'Preferências do App',
+    personalInfo: 'Informações Pessoais',
+    fullName: 'Nome Completo',
+    emailAddress: 'Endereço de Email',
+    dateOfBirth: 'Data de Nascimento',
+    location: 'Localização',
+    saveChanges: 'Salvar Alterações',
+    cancel: 'Cancelar',
+    changePhoto: 'Alterar Foto',
+    
+    // App Preferences
+    readingPreferences: 'Preferências de Leitura',
+    pushNotifications: 'Notificações Push',
+    soundEffects: 'Efeitos Sonoros',
+    autoBookmark: 'Marcador Automático',
+    enhancedReaderMode: 'Modo de Leitura Aprimorado',
+    dailyReadingReminders: 'Lembretes de Leitura Diária',
+    resetOptions: 'Opções de Redefinição',
+    resetReadingProgress: 'Redefinir Progresso de Leitura',
+    clearAllBookmarks: 'Limpar Todos os Marcadores',
+    resetAllPreferences: 'Redefinir Todas as Preferências',
+    
+    // Notifications
+    notificationSettings: 'Configurações de Notificação',
+    readingReminders: 'Lembretes de Leitura',
+    achievements: 'Conquistas',
+    weeklyDigest: 'Resumo Semanal',
+    
+    // About
+    appVersion: 'Versão do App',
+    rewardSystem: 'Sistema de Recompensas',
+    howToEarn: 'Como Ganhar',
+    leaderboardInfo: 'Informações da Classificação',
+    
+    // Success messages
+    profileUpdated: 'Perfil atualizado com sucesso!',
+    addressCopied: 'Endereço copiado para a área de transferência!',
+    
+    // Descriptions
+    pushNotificationsDesc: 'Receber notificações para lembretes de leitura e conquistas',
+    soundEffectsDesc: 'Reproduzir sons para interações e conquistas',
+    autoBookmarkDesc: 'Marcar automaticamente seu progresso de leitura',
+    enhancedReaderModeDesc: 'Otimizar texto para leitura confortável',
+    dailyReadingRemindersDesc: 'Receba lembretes para continuar sua leitura diária'
   }
 };
 

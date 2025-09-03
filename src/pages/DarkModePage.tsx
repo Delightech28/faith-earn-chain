@@ -54,24 +54,6 @@ const DarkModePage = () => {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Preview</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="p-4 bg-primary text-primary-foreground rounded-lg">
-                Primary Color Preview
-              </div>
-              <div className="p-4 bg-secondary text-secondary-foreground rounded-lg">
-                Secondary Color Preview
-              </div>
-              <div className="p-4 bg-muted text-muted-foreground rounded-lg">
-                Muted Color Preview
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

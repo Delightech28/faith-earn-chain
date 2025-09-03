@@ -2,18 +2,21 @@ import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { BookOpen, FileText, Search, Heart, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useFavorites } from "@/contexts/FavoritesContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-const gridMenu = [
-  { label: "All Books", icon: BookOpen },
-  { label: "Notes", icon: FileText },
-  { label: "Search", icon: Search },
-  { label: "Favourite", icon: Heart },
-  { label: "Feedback", icon: MessageSquare },
-];
 
 const Bible = () => {
   const isMobile = useMediaQuery({ maxWidth: 600 });
   const navigate = useNavigate();
+  const { favorites } = useFavorites();
+  const { t } = useLanguage();
+
+  const handleCardClick = (label: string) => {
+    if (label === "All Books") navigate("/books");
+    if (label === "Favourite") navigate("/favorites");
+    // Add other navigation logic as needed
+  };
   // Redirect or block desktop view
   if (!isMobile) {
     return (
@@ -38,16 +41,41 @@ const Bible = () => {
       {/* Grid Menu */}
       <div className="px-4 mt-2">
         <div className="grid grid-cols-3 gap-4">
-          {gridMenu.map((item, idx) => (
-            <div
-              key={item.label}
-              className="flex flex-col items-center justify-center py-8 rounded-lg bg-white shadow-sm cursor-pointer min-h-[110px]"
-              onClick={() => item.label === "All Books" && navigate("/books")}
-            >
-              <item.icon className="w-7 h-7 text-red-500 mb-2" />
-              <span className="text-xs font-semibold text-gray-700">{item.label}</span>
-            </div>
-          ))}
+          <div
+            className="flex flex-col items-center justify-center py-8 rounded-lg bg-white shadow-sm cursor-pointer min-h-[110px]"
+            onClick={() => handleCardClick("All Books")}
+          >
+            <BookOpen className="w-7 h-7 text-red-500 mb-2" />
+            <span className="text-xs font-semibold text-gray-700">All Books</span>
+          </div>
+          
+          <div className="flex flex-col items-center justify-center py-8 rounded-lg bg-white shadow-sm cursor-pointer min-h-[110px]">
+            <FileText className="w-7 h-7 text-red-500 mb-2" />
+            <span className="text-xs font-semibold text-gray-700">Notes</span>
+          </div>
+          
+          <div className="flex flex-col items-center justify-center py-8 rounded-lg bg-white shadow-sm cursor-pointer min-h-[110px]">
+            <Search className="w-7 h-7 text-red-500 mb-2" />
+            <span className="text-xs font-semibold text-gray-700">Search</span>
+          </div>
+          
+          <div
+            className="flex flex-col items-center justify-center py-8 rounded-lg bg-white shadow-sm cursor-pointer min-h-[110px] relative"
+            onClick={() => handleCardClick("Favourite")}
+          >
+            <Heart className="w-7 h-7 text-red-500 mb-2" />
+            <span className="text-xs font-semibold text-gray-700">Favourite</span>
+            {favorites.length > 0 && (
+              <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
+                {favorites.length}
+              </div>
+            )}
+          </div>
+          
+          <div className="flex flex-col items-center justify-center py-8 rounded-lg bg-white shadow-sm cursor-pointer min-h-[110px]">
+            <MessageSquare className="w-7 h-7 text-red-500 mb-2" />
+            <span className="text-xs font-semibold text-gray-700">Feedback</span>
+          </div>
         </div>
       </div>
       {/* Verse of the Day */}

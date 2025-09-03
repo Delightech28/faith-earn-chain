@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import Auth from "./pages/Auth";
 import Bible from "./pages/Bible";
 import Wallet from "./pages/Wallet";
@@ -22,6 +23,7 @@ import NotFound from "./pages/NotFound";
 import Books from "./pages/Books";
 import BookChapters from "./pages/BookChapters";
 import ReadChapter from "./pages/ReadChapter";
+import Favorites from "./pages/Favorites";
 import BottomNavigation from "./components/BottomNavigation";
 import ProtectedRoute from "./components/ProtectedRoute";
 

@@ -58,20 +58,6 @@ const LanguagePage = () => {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Preview</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Sample text in selected language:</p>
-              <div className="p-4 bg-muted rounded-lg">
-                <p className="font-medium">{t('readingPreferences')}</p>
-                <p className="text-sm text-muted-foreground">{t('pushNotificationsDesc')}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

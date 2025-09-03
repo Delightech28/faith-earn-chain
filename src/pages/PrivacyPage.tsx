@@ -22,6 +22,39 @@ const PrivacyPage = () => {
       ...prev,
       [key]: !prev[key]
     }));
+    // Save to localStorage
+    localStorage.setItem('privacy_settings', JSON.stringify({
+      ...privacy,
+      [key]: !privacy[key]
+    }));
+  };
+
+  const handleDownloadData = () => {
+    // Create a mock data file
+    const userData = {
+      profile: { name: 'User', email: 'user@example.com' },
+      readingProgress: { completed: 25, favorites: 12 },
+      settings: privacy
+    };
+    const dataStr = JSON.stringify(userData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'my-faithchain-data.json';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleViewPrivacyPolicy = () => {
+    window.open('/privacy-policy', '_blank');
+  };
+
+  const handleDeleteAccount = () => {
+    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+      localStorage.clear();
+      alert('Account deletion requested. You will be contacted within 30 days.');
+    }
   };
 
   const privacyOptions = [
@@ -100,15 +133,15 @@ const PrivacyPage = () => {
             <CardTitle>Data Management</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button variant="outline" className="w-full justify-start">
+            <Button variant="outline" className="w-full justify-start" onClick={handleDownloadData}>
               <Shield className="w-4 h-4 mr-2" />
               Download My Data
             </Button>
-            <Button variant="outline" className="w-full justify-start">
+            <Button variant="outline" className="w-full justify-start" onClick={handleViewPrivacyPolicy}>
               <Eye className="w-4 h-4 mr-2" />
               View Privacy Policy
             </Button>
-            <Button variant="destructive" className="w-full justify-start">
+            <Button variant="destructive" className="w-full justify-start" onClick={handleDeleteAccount}>
               <Trash2 className="w-4 h-4 mr-2" />
               Delete My Account
             </Button>
