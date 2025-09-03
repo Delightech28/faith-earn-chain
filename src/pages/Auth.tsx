@@ -13,10 +13,10 @@ const Auth = () => {
   const navigate = useNavigate();
 
   const getPasswordStrength = (password: string) => {
-    if (password.length < 6) return { strength: 'weak', color: 'text-red-500', bg: 'bg-red-500' };
-    if (password.length < 10 || !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) 
-      return { strength: 'medium', color: 'text-yellow-500', bg: 'bg-yellow-500' };
-    return { strength: 'strong', color: 'text-green-500', bg: 'bg-green-500' };
+    if (password.length < 6) return { strength: 'weak', color: 'text-destructive', bg: 'bg-destructive' };
+    if (password.length < 8 || !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) 
+      return { strength: 'medium', color: 'text-yellow-600', bg: 'bg-yellow-500' };
+    return { strength: 'strong', color: 'text-green-600', bg: 'bg-green-500' };
   };
 
   const passwordStrength = getPasswordStrength(password);
@@ -93,9 +93,9 @@ const Auth = () => {
                         <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
                           <div 
                             className={`h-full transition-all duration-300 ${passwordStrength.bg}`}
-                            style={{ 
-                              width: password.length < 6 ? '33%' : password.length < 10 ? '66%' : '100%' 
-                            }}
+                             style={{ 
+                               width: password.length < 6 ? '33%' : password.length < 8 ? '66%' : '100%' 
+                             }}
                           />
                         </div>
                         <span className={`text-xs font-medium ${passwordStrength.color}`}>
