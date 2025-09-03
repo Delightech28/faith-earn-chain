@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useReadingTimeTracker } from "@/hooks/useReadingTimeTracker";
+import ReadingTimeCounter from "@/components/ReadingTimeCounter";
 
 
 const Bible = () => {
@@ -33,6 +34,11 @@ const Bible = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#2d0b0b] to-[#fff] p-0 pb-20">
+      {/* Reading Time Counter */}
+      <div className="fixed top-4 right-4 z-50">
+        <ReadingTimeCounter />
+      </div>
+      
       {/* Header */}
       <div className="px-4 pt-8 pb-4">
         <div className="rounded-xl bg-gradient-to-r from-[#a91d1d] to-[#d43f3f] p-6 text-white min-h-[110px] flex flex-col justify-center">

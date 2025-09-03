@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 
 const STORAGE_KEY = 'faithchain_reading_time';
 const INACTIVITY_TIMEOUT = 30000; // 30 seconds of inactivity
@@ -8,8 +8,10 @@ export const useReadingTimeTracker = () => {
   const startTimeRef = useRef<number | null>(null);
   const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
   const updateIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const displayUpdateIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const isActiveRef = useRef(true);
   const isPageVisibleRef = useRef(true);
+  const [currentSessionSeconds, setCurrentSessionSeconds] = useState(0);
 
   // Get stored reading time in minutes
   const getStoredTime = useCallback((): number => {
@@ -31,6 +33,15 @@ export const useReadingTimeTracker = () => {
     }
     const hours = Math.floor(totalMinutes / 60);
     return `${hours}h`;
+  }, []);
+
+  // Format session time as HH:MM:SS
+  const formatSessionTime = useCallback((seconds: number): string => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+    
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   }, []);
 
   // Reset inactivity timer
@@ -80,6 +91,7 @@ export const useReadingTimeTracker = () => {
   const startReading = useCallback(() => {
     if (!startTimeRef.current && isActiveRef.current && isPageVisibleRef.current) {
       startTimeRef.current = Date.now();
+      setCurrentSessionSeconds(0);
     }
     resetInactivityTimer();
   }, [resetInactivityTimer]);
@@ -93,6 +105,7 @@ export const useReadingTimeTracker = () => {
         updateStoredTime(minutesToAdd);
       }
       startTimeRef.current = null;
+      setCurrentSessionSeconds(0);
     }
 
     // Clear timers
@@ -103,6 +116,10 @@ export const useReadingTimeTracker = () => {
     if (updateIntervalRef.current) {
       clearInterval(updateIntervalRef.current);
       updateIntervalRef.current = null;
+    }
+    if (displayUpdateIntervalRef.current) {
+      clearInterval(displayUpdateIntervalRef.current);
+      displayUpdateIntervalRef.current = null;
     }
   }, [updateStoredTime]);
 
@@ -146,6 +163,17 @@ export const useReadingTimeTracker = () => {
       }
     }, UPDATE_INTERVAL);
 
+    // Set up interval to update display counter every second
+    displayUpdateIntervalRef.current = setInterval(() => {
+      if (startTimeRef.current && isActiveRef.current && isPageVisibleRef.current) {
+        const sessionTime = Date.now() - startTimeRef.current;
+        const sessionSeconds = Math.floor(sessionTime / 1000);
+        setCurrentSessionSeconds(sessionSeconds);
+      } else {
+        setCurrentSessionSeconds(0);
+      }
+    }, 1000);
+
     // Cleanup function
     return () => {
       events.forEach(event => {
@@ -160,6 +188,8 @@ export const useReadingTimeTracker = () => {
   return {
     getCurrentReadingTime,
     formatReadingTime,
-    getStoredTime
+    formatSessionTime,
+    getStoredTime,
+    currentSessionSeconds
   };
 };

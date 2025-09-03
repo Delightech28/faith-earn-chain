@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, BookOpen, Search, Bookmark, Settings, Heart, Highlighter, Palette, Copy, FileText, Share2 } from "lucide-react";
 import { useReadingTimeTracker } from "@/hooks/useReadingTimeTracker";
+import ReadingTimeCounter from "@/components/ReadingTimeCounter";
 
 const versions = ["KJV", "NIV", "NKJV", "GNB", "NLT", "AMP"];
 
@@ -321,6 +322,11 @@ const ReadChapter = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground max-w-full overflow-x-hidden">
+      {/* Reading Time Counter */}
+      <div className="fixed top-4 right-4 z-50">
+        <ReadingTimeCounter />
+      </div>
+      
       {/* Header */}
       <div className="sticky top-0 z-50 bg-background border-b shadow-sm">
         <div className="flex items-center justify-between px-4 py-3">
