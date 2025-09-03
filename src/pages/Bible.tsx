@@ -4,6 +4,7 @@ import { BookOpen, FileText, Search, Heart, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useReadingTimeTracker } from "@/hooks/useReadingTimeTracker";
 
 
 const Bible = () => {
@@ -11,6 +12,7 @@ const Bible = () => {
   const navigate = useNavigate();
   const { favorites } = useFavorites();
   const { t } = useLanguage();
+  useReadingTimeTracker(); // Start tracking reading time
 
   const handleCardClick = (label: string) => {
     if (label === "All Books") navigate("/books");

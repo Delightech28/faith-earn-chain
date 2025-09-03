@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, BookOpen, Search, Bookmark, Settings, Heart, Highlighter, Palette, Copy, FileText, Share2 } from "lucide-react";
+import { useReadingTimeTracker } from "@/hooks/useReadingTimeTracker";
 
 const versions = ["KJV", "NIV", "NKJV", "GNB", "NLT", "AMP"];
 
@@ -205,6 +206,7 @@ const chapterTitles: Record<string, Record<number, string>> = {
 
 const ReadChapter = () => {
   const { book, chapter } = useParams<{ book: string; chapter: string }>();
+  useReadingTimeTracker(); // Start tracking reading time
   const [version, setVersion] = useState("KJV");
   const [selectedVerse, setSelectedVerse] = useState<number | null>(null);
   const [highlights, setHighlights] = useState<Set<number>>(new Set());

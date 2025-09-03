@@ -4,10 +4,12 @@ import { Badge } from "@/components/ui/badge";
 import { User, Settings, BookOpen, Award, Clock, Calendar, LogOut, Edit, Sliders } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useReadingTimeTracker } from "@/hooks/useReadingTimeTracker";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { getStoredTime, formatReadingTime } = useReadingTimeTracker();
   
   const handleLogout = () => {
     localStorage.removeItem("faithchain_user");
@@ -15,7 +17,7 @@ const Profile = () => {
   };
 
   const userStats = {
-    totalReadingTime: 850, // minutes
+    totalReadingTime: getStoredTime(), // Get actual reading time from localStorage
     totalTokensEarned: 156,
     booksCompleted: 3,
     streakDays: 12,
@@ -64,7 +66,7 @@ const Profile = () => {
           <Card>
             <CardContent className="p-4 text-center">
               <Clock className="w-8 h-8 mx-auto mb-2 text-primary" />
-              <p className="text-2xl font-bold">{Math.floor(userStats.totalReadingTime / 60)}h</p>
+              <p className="text-2xl font-bold">{formatReadingTime(userStats.totalReadingTime)}</p>
               <p className="text-sm text-muted-foreground">Reading Time</p>
             </CardContent>
           </Card>
