@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useMediaQuery } from "react-responsive";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
@@ -31,6 +32,25 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const isAuthenticated = localStorage.getItem("faithchain_user");
+  const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 }); // Allow mobile and tablet sizes
+  
+  // Block access on desktop/large screens
+  if (!isMobileOrTablet) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="text-center p-6 max-w-md">
+          <h2 className="text-2xl font-bold mb-4 text-foreground">Mobile Only App</h2>
+          <p className="text-muted-foreground mb-4">
+            This application is designed exclusively for mobile devices and tablets. 
+            Please access it from your smartphone or tablet for the best experience.
+          </p>
+          <div className="text-sm text-muted-foreground">
+            Supported devices: Android phones, iPhones, iPads, and Android tablets
+          </div>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <QueryClientProvider client={queryClient}>

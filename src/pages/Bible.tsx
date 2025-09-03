@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useMediaQuery } from "react-responsive";
 import { BookOpen, FileText, Search, Heart, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useFavorites } from "@/contexts/FavoritesContext";
@@ -9,7 +8,6 @@ import ReadingTimeCounter from "@/components/ReadingTimeCounter";
 
 
 const Bible = () => {
-  const isMobile = useMediaQuery({ maxWidth: 600 });
   const navigate = useNavigate();
   const { favorites } = useFavorites();
   const { t } = useLanguage();
@@ -20,17 +18,6 @@ const Bible = () => {
     if (label === "Favourite") navigate("/favorites");
     // Add other navigation logic as needed
   };
-  // Redirect or block desktop view
-  if (!isMobile) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <div className="text-center">
-          <h2 className="text-xl font-bold mb-2">Mobile Only</h2>
-          <p className="text-muted-foreground">This page is only accessible on mobile devices.</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#2d0b0b] to-[#fff] p-0 pb-20">
