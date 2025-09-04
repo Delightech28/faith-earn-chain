@@ -4,7 +4,7 @@ import { ArrowLeft, BookOpen, Search, Bookmark, Settings, Heart, Highlighter, Pa
 import { useReadingTimeTracker } from "@/hooks/useReadingTimeTracker";
 import ReadingTimeCounter from "@/components/ReadingTimeCounter";
 
-const versions = ["KJV", "NIV", "NKJV", "GNB", "NLT", "AMP"];
+const versions = ["KJV", "NIV", "NKJV", "GNB", "NLT", "AMP", "ESV"];
 
 const versionNames: Record<string, string> = {
   KJV: "King James Version",
@@ -12,11 +12,26 @@ const versionNames: Record<string, string> = {
   NKJV: "New King James Version",
   GNB: "Good News Bible",
   NLT: "New Living Translation",
-  AMP: "Amplified Bible"
+  AMP: "Amplified Bible",
+  ESV: "English Standard Version"
 };
 
 // Mock Bible data for different versions
-const mockBibleData: Record<string, Record<string, any>> = {
+type Verse = {
+  book_id?: string;
+  book_name?: string;
+  chapter?: number;
+  verse: number;
+  text: string;
+};
+
+type ChapterData = {
+  reference: string;
+  verses: Verse[];
+  text?: string;
+};
+
+const mockBibleData: Record<string, Record<string, ChapterData>> = {
   "Genesis 1": {
     KJV: {
       reference: "Genesis 1",
@@ -216,19 +231,7 @@ const ReadChapter = () => {
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  type Verse = {
-    book_id: string;
-    book_name: string;
-    chapter: number;
-    verse: number;
-    text: string;
-  };
-
-  type ChapterData = {
-    reference: string;
-    verses: Verse[];
-    text?: string;
-  };
+  // Remove duplicate Verse and ChapterData type definitions to avoid type conflicts
 
   const [chapterData, setChapterData] = useState<ChapterData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -258,7 +261,7 @@ const ReadChapter = () => {
           return newBackgrounds;
         });
         break;
-      case 'Copy':
+      case 'Copy': {
         const verseData = chapterData?.verses.find(v => v.verse === verseNumber);
         if (verseData) {
           navigator.clipboard.writeText(`${book} ${chapter}:${verseNumber} - ${verseData.text} (${version})`);
@@ -266,7 +269,8 @@ const ReadChapter = () => {
           console.log('Verse copied to clipboard');
         }
         break;
-      case 'Note':
+      }
+      case 'Note': {
         const note = prompt('Add your note:', notes[verseNumber] || '');
         if (note !== null) {
           setNotes(prev => ({
@@ -275,7 +279,8 @@ const ReadChapter = () => {
           }));
         }
         break;
-      case 'Share':
+      }
+      case 'Share': {
         const shareVerseData = chapterData?.verses.find(v => v.verse === verseNumber);
         if (shareVerseData && navigator.share) {
           navigator.share({
@@ -290,6 +295,7 @@ const ReadChapter = () => {
           console.log('Verse copied for sharing');
         }
         break;
+      }
     }
     setSelectedVerse(null);
   };
@@ -297,27 +303,83 @@ const ReadChapter = () => {
   useEffect(() => {
     setLoading(true);
     const chapterKey = `${book} ${chapter}`;
-    
+
+    // Helper: API keys (replace with your actual keys)
+    const API_BIBLE_KEY = "994567644ec835262c2bcd7568099c55"; // Get from https://scripture.api.bible
+    const NLT_API_KEY = "TEST"; // Get from https://api.nlt.to
+
+    // Helper: API endpoints and version mapping
+    const apiBibleVersionIds = {
+      NIV: "65eec8e0b60e656b-01", // NIV
+      GNB: "61fd76eafa1577c2-03", // GNB
+      ESV: "de4e12af7f28f599-01" // ESV
+      // Add NKJV or others here if you get their IDs
+    };
+
     // Check if we have mock data for this chapter
     if (mockBibleData[chapterKey] && mockBibleData[chapterKey][version]) {
       setChapterData(mockBibleData[chapterKey][version]);
       setLoading(false);
-    } else {
-      // Fallback to API for KJV only
-      fetch(`https://bible-api.com/${encodeURIComponent(book)}+${chapter}?translation=kjv`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.error) {
-            throw new Error(data.error);
-          }
-          setChapterData(data);
-          setLoading(false);
-        })
-        .catch(() => {
-          setLoading(false);
-          setChapterData(null);
-        });
+      return;
     }
+
+    // Fetch logic for each version
+    const fetchChapter = async () => {
+      try {
+        let data = null;
+        if (version === "KJV") {
+          // KJV: bible-api.com
+          const res = await fetch(`https://bible-api.com/${encodeURIComponent(book)}+${chapter}?translation=kjv`);
+          data = await res.json();
+        } else if (["NIV", "GNB", "ESV"].includes(version)) {
+          // API.Bible: requires API key and version ID
+          const bibleId = apiBibleVersionIds[version];
+          // Map book names to API.Bible codes
+          const bookMap = {
+            Genesis: "GEN",
+            Exodus: "EXO",
+            Leviticus: "LEV",
+            Numbers: "NUM",
+            Deuteronomy: "DEU",
+            Ezekiel: "EZK"
+            // Add more as needed
+          };
+          const bookCode = bookMap[book] || book.slice(0,3).toUpperCase();
+          const chapterId = `${bookCode}.${chapter}`;
+          // Fetch all verses for the chapter
+          const res = await fetch(`https://api.scripture.api.bible/v1/bibles/${bibleId}/chapters/${chapterId}/verses`, {
+            headers: { "api-key": API_BIBLE_KEY }
+          });
+          const apiBibleData = await res.json();
+          let verses = [];
+          if (apiBibleData && apiBibleData.data && apiBibleData.data.verses) {
+            verses = apiBibleData.data.verses.map(v => ({ verse: v.number, text: v.text }));
+            data = { reference: `${book} ${chapter}`, verses };
+          } else {
+            data = null;
+          }
+        } else if (version === "NLT") {
+          // NLT API
+          const passageRef = `${book}.${chapter}`;
+          const res = await fetch(`https://api.nlt.to/api/passages?ref=${passageRef}&key=${NLT_API_KEY}`);
+          const nltData = await res.json();
+          // Parse verses from NLT API response
+          if (nltData && nltData.text) {
+            const verses = [{ verse: 1, text: nltData.text.replace(/<[^>]+>/g, "") }];
+            data = { reference: passageRef, verses };
+          }
+        } else if (version === "AMP") {
+          // AMP: No free API, fallback to mock data or show message
+          data = { reference: `${book} ${chapter}`, verses: [{ verse: 1, text: "AMP version not available via free API." }] };
+        }
+        setChapterData(data);
+      } catch (err) {
+        setChapterData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchChapter();
   }, [book, chapter, version]);
 
   return (
@@ -417,7 +479,10 @@ const ReadChapter = () => {
 
       {/* Version Selector */}
       <div className="px-4 py-3 bg-muted/50 border-b">
-        <div className="flex flex-wrap gap-2">
+        <div
+          className="flex gap-2 overflow-x-auto"
+          style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
           {versions.map(v => (
             <button
               key={v}
