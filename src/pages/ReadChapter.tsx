@@ -352,15 +352,41 @@ const ReadChapter = () => {
           const bookCode = bookMap[book] || book.slice(0,3).toUpperCase();
           const chapterId = `${bookCode}.${chapter}`;
           // Fetch all verses for the chapter
-          const res = await fetch(`https://api.scripture.api.bible/v1/bibles/${bibleId}/chapters/${chapterId}/verses`, {
-            headers: { "api-key": API_BIBLE_KEY }
-          });
-          const apiBibleData = await res.json();
-          let verses = [];
-          if (apiBibleData && apiBibleData.data && apiBibleData.data.verses) {
-            verses = apiBibleData.data.verses.map(v => ({ verse: v.number, text: v.text }));
-            data = { reference: `${book} ${chapter}`, verses };
-          } else {
+          try {
+            const res = await fetch(`https://api.scripture.api.bible/v1/bibles/${bibleId}/chapters/${chapterId}/verses`, {
+              headers: { "api-key": API_BIBLE_KEY }
+            });
+            const apiBibleData = await res.json();
+            let verses = [];
+            if (apiBibleData && apiBibleData.data && Array.isArray(apiBibleData.data)) {
+              // Always fetch each verse by ID from the returned array
+              const verseIdArray = apiBibleData.data;
+              const versePromises = verseIdArray.map(async (v) => {
+                try {
+                  const verseRes = await fetch(`https://api.scripture.api.bible/v1/bibles/${bibleId}/verses/${v.id}`, {
+                    headers: { "api-key": API_BIBLE_KEY }
+                  });
+                  const verseData = await verseRes.json();
+                  // Remove leading verse number and whitespace from text
+                  let text = verseData.data.content.replace(/<[^>]+>/g, "");
+                  text = text.replace(/^\s*\d+\s*/, "");
+                  return {
+                    verse: verseData.data.reference.split(':')[1] ? parseInt(verseData.data.reference.split(':')[1]) : 0,
+                    text
+                  };
+                } catch (verseErr) {
+                  console.error('Error fetching verse', v.id, verseErr);
+                  return { verse: 0, text: `Error fetching verse ${v.id}` };
+                }
+              });
+              verses = await Promise.all(versePromises);
+              data = { reference: `${book} ${chapter}`, verses };
+            } else {
+              console.error('No verse ID array found in apiBibleData:', apiBibleData);
+              data = null;
+            }
+          } catch (err) {
+            console.error('Error fetching chapter/verses from API.Bible:', err);
             data = null;
           }
         } else if (version === "NLT") {
