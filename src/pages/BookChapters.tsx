@@ -13,11 +13,11 @@ const BookChapters = () => {
   const chapters = chaptersMap[bookName || ""] || 0;
 
   return (
-    <div className="min-h-screen bg-[#f7f7fa] pb-20">
+  <div className="min-h-screen bg-[#f7f7fa] dark:bg-[#18181b] pb-20">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 pt-4 pb-2 shadow-md bg-white">
-        <button onClick={() => navigate(-1)} className="text-3xl font-bold text-gray-700">&#8592;</button>
-        <div className="font-bold text-xl text-gray-900">{bookName}</div>
+  <div className="flex items-center justify-between px-4 pt-4 pb-2 shadow-md bg-white dark:bg-zinc-900">
+  <button onClick={() => navigate(-1)} className="text-3xl font-bold text-gray-700 dark:text-gray-200">&#8592;</button>
+  <div className="font-bold text-xl text-gray-900 dark:text-white">{bookName}</div>
         <div className="w-8 h-8" />
       </div>
       {/* Tabs (for context, not interactive) */}
@@ -41,7 +41,7 @@ const BookChapters = () => {
           {Array.from({ length: chapters }, (_, i) => (
             <div
               key={i + 1}
-              className="px-4 py-3 rounded-lg bg-white shadow text-gray-900 text-lg font-semibold cursor-pointer text-center"
+              className="px-4 py-3 rounded-lg bg-white dark:bg-zinc-800 shadow text-gray-900 dark:text-white text-lg font-semibold cursor-pointer text-center"
               onClick={() => navigate(`/read/${encodeURIComponent(bookName || '')}/${i + 1}`)}
             >
               {i + 1}

@@ -1,19 +1,31 @@
 import React, { useEffect, useState } from "react";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter
+} from "@/components/ui/dialog";
+import { useFavorites } from "@/contexts/FavoritesContext";
+import { auth, db } from "../firebase";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, BookOpen, Search, Bookmark, Settings, Heart, Highlighter, Palette, Copy, FileText, Share2 } from "lucide-react";
 import { useReadingTimeTracker } from "@/hooks/useReadingTimeTracker";
 import ReadingTimeCounter from "@/components/ReadingTimeCounter";
 
-const versions = ["KJV", "NIV", "NKJV", "GNB", "NLT", "AMP", "ESV"];
+// Only show KJV to users; other versions are commented out for now
+const versions = ["KJV" /*, "NIV", "NKJV", "GNB", "NLT", "AMP", "ESV"*/ ];
 
 const versionNames: Record<string, string> = {
   KJV: "King James Version",
-  NIV: "New International Version",
-  NKJV: "New King James Version",
-  GNB: "Good News Bible",
-  NLT: "New Living Translation",
-  AMP: "Amplified Bible",
-  ESV: "English Standard Version"
+  // NIV: "New International Version",
+  // NKJV: "New King James Version",
+  // GNB: "Good News Bible",
+  // NLT: "New Living Translation",
+  // AMP: "Amplified Bible",
+  // ESV: "English Standard Version"
 };
 
 // Mock Bible data for different versions
@@ -228,7 +240,10 @@ const ReadChapter = () => {
   const [highlights, setHighlights] = useState<Set<number>>(new Set());
   const [backgrounds, setBackgrounds] = useState<Set<number>>(new Set());
   const [notes, setNotes] = useState<Record<number, string>>({});
-  const [favorites, setFavorites] = useState<Set<number>>(new Set());
+  const [noteModal, setNoteModal] = useState<{ open: boolean; verseNumber: number | null }>({ open: false, verseNumber: null });
+  const [noteInput, setNoteInput] = useState("");
+  const [savingNote, setSavingNote] = useState(false);
+  const { favorites, toggleFavorite, isFavorite } = useFavorites();
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   // Remove duplicate Verse and ChapterData type definitions to avoid type conflicts
@@ -236,6 +251,29 @@ const ReadChapter = () => {
   const [chapterData, setChapterData] = useState<ChapterData | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Save note to Firestore and local state
+  const handleSaveNote = async () => {
+    if (!noteModal.verseNumber) return;
+    setSavingNote(true);
+    const verseNumber = noteModal.verseNumber;
+    setNotes(prev => ({ ...prev, [verseNumber]: noteInput }));
+    // Save to Firestore
+    if (auth.currentUser) {
+      const userDoc = doc(db, "users", auth.currentUser.uid);
+      const userSnap = await getDoc(userDoc);
+      let userNotes = {};
+      if (userSnap.exists() && userSnap.data().notes) {
+        userNotes = userSnap.data().notes;
+      }
+      const verseId = `${(book || '').toLowerCase().replace(/\s/g, '-')}-${chapter}-${verseNumber}`;
+      await updateDoc(userDoc, {
+        notes: { ...userNotes, [verseId]: noteInput }
+      });
+    }
+    setSavingNote(false);
+    setNoteModal({ open: false, verseNumber: null });
+  };
 
   const handleAction = (action: string, verseNumber: number) => {
     switch (action) {
@@ -271,13 +309,8 @@ const ReadChapter = () => {
         break;
       }
       case 'Note': {
-        const note = prompt('Add your note:', notes[verseNumber] || '');
-        if (note !== null) {
-          setNotes(prev => ({
-            ...prev,
-            [verseNumber]: note
-          }));
-        }
+        setNoteInput(notes[verseNumber] || "");
+        setNoteModal({ open: true, verseNumber });
         break;
       }
       case 'Share': {
@@ -589,24 +622,45 @@ const ReadChapter = () => {
                         </div>
                       )}
                     </div>
-                    <button 
+                    <button
                       className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-accent rounded flex-shrink-0"
-                      onClick={(e) => {
+                      onClick={async (e) => {
                         e.stopPropagation();
-                        setFavorites(prev => {
-                          const newFavorites = new Set(prev);
-                          if (newFavorites.has(verse.verse)) {
-                            newFavorites.delete(verse.verse);
-                          } else {
-                            newFavorites.add(verse.verse);
+                        // Compose a unique verse ID: e.g. "genesis-1-1"
+                        const verseId = `${(book || '').toLowerCase().replace(/\s/g, '-')}-${chapter}-${verse.verse}`;
+                        toggleFavorite(verseId);
+                        // Store full verse object in Firestore if user is logged in
+                        if (auth.currentUser) {
+                          const userDoc = doc(db, "users", auth.currentUser.uid);
+                          const userSnap = await getDoc(userDoc);
+                          let userFavorites = [];
+                          if (userSnap.exists() && Array.isArray(userSnap.data().favorites)) {
+                            userFavorites = userSnap.data().favorites;
                           }
-                          return newFavorites;
-                        });
+                          // Check if already favorited
+                          const exists = userFavorites.some((fav) => fav.id === verseId);
+                          let newFavorites;
+                          if (exists) {
+                            newFavorites = userFavorites.filter((fav) => fav.id !== verseId);
+                          } else {
+                            newFavorites = [
+                              ...userFavorites,
+                              {
+                                id: verseId,
+                                book: book || '',
+                                chapter: Number(chapter),
+                                verse: verse.verse,
+                                text: verse.text
+                              }
+                            ];
+                          }
+                          await updateDoc(userDoc, { favorites: newFavorites });
+                        }
                       }}
                     >
                       <Heart className={`w-4 h-4 transition-colors ${
-                        favorites.has(verse.verse) 
-                          ? 'text-red-500 fill-red-500' 
+                        isFavorite(`${(book || '').toLowerCase().replace(/\s/g, '-')}-${chapter}-${verse.verse}`)
+                          ? 'text-red-500 fill-red-500'
                           : 'text-muted-foreground hover:text-red-400'
                       }`} />
                     </button>
@@ -618,6 +672,37 @@ const ReadChapter = () => {
                 </div>
               )}
             </div>
+            {/* Note Modal */}
+            <Dialog open={noteModal.open} onOpenChange={open => setNoteModal(m => ({ ...m, open }))}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add/Edit Note</DialogTitle>
+                </DialogHeader>
+                <textarea
+                  className="w-full min-h-[100px] border rounded p-2 mt-2"
+                  value={noteInput}
+                  onChange={e => setNoteInput(e.target.value)}
+                  placeholder="Type your note here..."
+                  disabled={savingNote}
+                />
+                <DialogFooter>
+                  <button
+                    className="px-4 py-2 rounded bg-primary text-white font-semibold hover:bg-primary/80"
+                    onClick={handleSaveNote}
+                    disabled={savingNote}
+                  >
+                    {savingNote ? "Saving..." : "Save"}
+                  </button>
+                  <button
+                    className="px-4 py-2 rounded bg-muted text-foreground font-semibold hover:bg-accent"
+                    onClick={() => setNoteModal({ open: false, verseNumber: null })}
+                    disabled={savingNote}
+                  >
+                    Cancel
+                  </button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         ) : (
           <div className="text-center py-12">

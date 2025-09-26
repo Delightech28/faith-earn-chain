@@ -4,11 +4,30 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, Moon, Sun } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
+import { auth, db } from "../firebase";
+import { doc, updateDoc } from "firebase/firestore";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const DarkModePage = () => {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
+
+  // Save theme to Firestore for persistence
+  const handleThemeChange = async (checked: boolean) => {
+    const newTheme = checked ? 'dark' : 'light';
+    if (newTheme !== theme) {
+      toggleTheme();
+      if (auth.currentUser) {
+        const userDoc = doc(db, "users", auth.currentUser.uid);
+        try {
+          await updateDoc(userDoc, { theme: newTheme });
+        } catch (e) {
+          // Optionally handle error
+          console.error("Failed to update theme in Firestore", e);
+        }
+      }
+    }
+  };
   const { t } = useLanguage();
 
   return (
@@ -48,7 +67,7 @@ const DarkModePage = () => {
               <Switch
                 id="darkmode"
                 checked={theme === 'dark'}
-                onCheckedChange={toggleTheme}
+                onCheckedChange={handleThemeChange}
               />
             </div>
           </CardContent>

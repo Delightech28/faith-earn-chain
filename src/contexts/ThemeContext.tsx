@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { auth, db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 interface ThemeContextType {
   theme: 'light' | 'dark';
@@ -12,6 +14,27 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     const saved = localStorage.getItem('theme');
     return saved === 'dark' ? 'dark' : 'light';
   });
+
+  // On login, try to load theme from Firestore
+  useEffect(() => {
+    const loadUserTheme = async () => {
+      if (auth.currentUser) {
+        const userDoc = doc(db, "users", auth.currentUser.uid);
+        const userSnap = await getDoc(userDoc);
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          if (userData.theme && (userData.theme === 'dark' || userData.theme === 'light')) {
+            setTheme(userData.theme);
+            return;
+          }
+        }
+      }
+      // fallback to localStorage already handled by initial state
+    };
+    loadUserTheme();
+    // Only run on login
+    // eslint-disable-next-line
+  }, [auth.currentUser]);
 
   useEffect(() => {
     const root = document.documentElement;

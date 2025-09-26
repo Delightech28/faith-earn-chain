@@ -5,24 +5,119 @@ import { User, Settings, BookOpen, Award, Clock, Calendar, LogOut, Edit, Sliders
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useReadingTimeTracker } from "@/hooks/useReadingTimeTracker";
+import { useEffect, useState } from "react";
+import { useTheme } from "@/contexts/ThemeContext";
+import { auth, db } from "../firebase";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const { getStoredTime, formatReadingTime } = useReadingTimeTracker();
+  const { formatReadingTime } = useReadingTimeTracker();
   
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+    } catch (e) {
+      console.error("Logout failed:", e);
+    }
     localStorage.removeItem("faithchain_user");
     window.location.href = "/";
   };
 
+  // Define a type for user data
+  interface UserData {
+    displayName?: string;
+    email?: string;
+    photoURL?: string;
+    photoBase64?: string;
+    createdAt?: string | number | Date;
+    tier?: string;
+    theme?: 'light' | 'dark';
+    // Add other fields as needed
+  }
+  // User data state
+  const [userData, setUserData] = useState<UserData | null>(null);
+
+  // Theme state and context
+  const { theme, toggleTheme } = useTheme();
+  useEffect(() => {
+    if (userData?.theme && userData.theme !== theme) {
+      // Sync context with Firestore value
+      if (userData.theme === 'dark' && theme !== 'dark') toggleTheme();
+      if (userData.theme === 'light' && theme !== 'light') toggleTheme();
+    }
+    // eslint-disable-next-line
+  }, [userData]);
+
+  const handleThemeChange = async (newTheme: 'light' | 'dark') => {
+    if (newTheme !== theme) toggleTheme();
+    if (auth.currentUser) {
+      const userDoc = doc(db, "users", auth.currentUser.uid);
+      await updateDoc(userDoc, { theme: newTheme });
+    }
+  };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (!auth.currentUser) return;
+      const userDoc = doc(db, "users", auth.currentUser.uid);
+      const userSnap = await getDoc(userDoc);
+      if (userSnap.exists()) {
+        setUserData(userSnap.data() as UserData);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  // Stats state
+  const [stats, setStats] = useState({
+    totalReadingTime: 0,
+    totalTokensEarned: 0,
+    booksCompleted: 0,
+    streakDays: 0,
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!auth.currentUser) return;
+      const userDoc = doc(db, "users", auth.currentUser.uid);
+      const userSnap = await getDoc(userDoc);
+      if (userSnap.exists()) {
+        const data = userSnap.data();
+        setStats({
+          totalReadingTime: data.readingTime || 0,
+          totalTokensEarned: data.tokensEarned || 0,
+          booksCompleted: data.booksRead || 0,
+          streakDays: data.dayStreak || 0,
+        });
+      }
+    };
+    fetchStats();
+  }, []);
+
   const userStats = {
-    totalReadingTime: getStoredTime(), // Get actual reading time from localStorage
-    totalTokensEarned: 156,
-    booksCompleted: 3,
-    streakDays: 12,
-    joinDate: "November 2024",
-    currentTier: "Gold"
+    ...stats,
+    joinDate: userData?.createdAt ? new Date(userData.createdAt).toLocaleString('default', { month: 'long', year: 'numeric' }) : "November 2024",
+    currentTier: userData?.tier || "Gold"
+  };
+
+  // Reset stats handler
+  const handleResetStats = async () => {
+    if (!auth.currentUser) return;
+    const userDoc = doc(db, "users", auth.currentUser.uid);
+    await updateDoc(userDoc, {
+      readingTime: 0,
+      tokensEarned: 0,
+      booksRead: 0,
+      dayStreak: 0
+    });
+    setStats({
+      totalReadingTime: 0,
+      totalTokensEarned: 0,
+      booksCompleted: 0,
+      streakDays: 0,
+    });
   };
 
   const achievements = [
@@ -43,17 +138,25 @@ const Profile = () => {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xl font-bold">
-                JD
-              </div>
+              {userData?.photoBase64 ? (
+                <img src={userData.photoBase64} alt="Profile" className="w-16 h-16 rounded-full object-cover" />
+              ) : userData?.photoURL ? (
+                <img src={userData.photoURL} alt="Profile" className="w-16 h-16 rounded-full object-cover" />
+              ) : (
+                <div className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xl font-bold">
+                  {userData?.displayName ? userData.displayName.split(' ').map(n => n[0]).join('') : 'JD'}
+                </div>
+              )}
               <div className="flex-1">
-                <h2 className="text-xl font-semibold">John Doe</h2>
-                <p className="text-muted-foreground">john.doe@example.com</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <Badge variant="default">{userStats.currentTier} Member</Badge>
+                <h2 className="text-xl font-semibold">{userData?.displayName || "John Doe"}</h2>
+                <p className="text-muted-foreground">{userData?.email || "john.doe@example.com"}</p>
+                <div className="flex flex-col items-start gap-1 mt-1">
+                  <Badge variant="default">
+                    <span className="text-xs">{userStats.currentTier} Member</span>
+                  </Badge>
                   <Badge variant="secondary">
                     <Calendar className="w-3 h-3 mr-1" />
-                    Joined {userStats.joinDate}
+                    <span className="text-xs">Joined {userStats.joinDate}</span>
                   </Badge>
                 </div>
               </div>
@@ -62,7 +165,7 @@ const Profile = () => {
         </Card>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
           <Card>
             <CardContent className="p-4 text-center">
               <Clock className="w-8 h-8 mx-auto mb-2 text-primary" />
@@ -130,6 +233,8 @@ const Profile = () => {
             ))}
           </CardContent>
         </Card>
+
+
 
         {/* Settings and Actions */}
         <Card>

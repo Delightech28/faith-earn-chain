@@ -15,11 +15,11 @@ const Books = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   return (
-    <div className="min-h-screen bg-[#f7f7fa] pb-20">
+  <div className="min-h-screen bg-[#f7f7fa] dark:bg-[#18181b] pb-20">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 pt-4 pb-2 shadow-md bg-white">
-        <button onClick={() => window.history.back()} className="text-3xl font-bold text-gray-700">&#8592;</button>
-        <div className="font-bold text-xl text-gray-900">{t('books')}</div>
+  <div className="flex items-center justify-between px-4 pt-4 pb-2 shadow-md bg-white dark:bg-zinc-900">
+  <button onClick={() => window.history.back()} className="text-3xl font-bold text-gray-700 dark:text-gray-200">&#8592;</button>
+  <div className="font-bold text-xl text-gray-900 dark:text-white">{t('books')}</div>
         <div className="w-8 h-8" />
       </div>
       {/* Tabs */}
@@ -43,7 +43,7 @@ const Books = () => {
           {(tab === 'old' ? oldTestament : newTestament).map(book => (
             <div
               key={book}
-              className="px-4 py-2 rounded-full bg-white shadow text-gray-900 text-base font-semibold cursor-pointer"
+              className="px-4 py-2 rounded-full bg-white dark:bg-zinc-800 shadow text-gray-900 dark:text-white text-base font-semibold cursor-pointer"
               style={{minWidth: 90, minHeight: 36, fontSize: '1rem'}}
               onClick={() => navigate(`/books/${encodeURIComponent(book)}`)}
             >

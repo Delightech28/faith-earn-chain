@@ -19,11 +19,9 @@ const BottomNavigation = () => {
         <div className="flex flex-1 justify-evenly">
           <NavLink to="/bible" className={({isActive}) => `flex flex-col items-center text-center ${isActive ? 'text-red-600' : 'text-white'} w-16`}>
             <Home className="w-6 h-6 mb-1" />
-            <span className="text-xs">Home</span>
           </NavLink>
           <NavLink to="/leaderboard" className={({isActive}) => `flex flex-col items-center text-center ${isActive ? 'text-red-600' : 'text-white'} w-16`}>
             <Trophy className="w-6 h-6 mb-1" />
-            <span className="text-xs">Leaderboard</span>
           </NavLink>
         </div>
         {/* Center Bible button */}
@@ -36,11 +34,9 @@ const BottomNavigation = () => {
         <div className="flex flex-1 justify-evenly">
           <NavLink to="/wallet" className={({isActive}) => `flex flex-col items-center text-center ${isActive ? 'text-red-600' : 'text-white'} w-16`}>
             <Wallet className="w-6 h-6 mb-1" />
-            <span className="text-xs">Wallet</span>
           </NavLink>
           <NavLink to="/profile" className={({isActive}) => `flex flex-col items-center text-center ${isActive ? 'text-red-600' : 'text-white'} w-16`}>
             <User className="w-6 h-6 mb-1" />
-            <span className="text-xs">Profile</span>
           </NavLink>
         </div>
       </div>

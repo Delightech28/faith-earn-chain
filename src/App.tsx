@@ -26,6 +26,7 @@ import BookChapters from "./pages/BookChapters";
 import ReadChapter from "./pages/ReadChapter";
 import Favorites from "./pages/Favorites";
 import BottomNavigation from "./components/BottomNavigation";
+import ReadingTimeCounter from "@/components/ReadingTimeCounter";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -60,6 +61,20 @@ const App = () => {
             <FavoritesProvider>
               <Toaster />
               <Sonner />
+              {/* Show the reading time counter on all pages except Auth, Profile, Wallet, Leaderboard */}
+              {window.location.pathname !== '/' &&
+                !window.location.pathname.startsWith('/auth') &&
+                !['/profile', '/wallet', '/leaderboard'].includes(window.location.pathname) && (
+                  <div
+                    className={
+                      window.location.pathname === '/wallet'
+                        ? 'fixed top-20 right-4 z-[9999] border-2 border-red-500'
+                        : 'fixed top-4 right-4 z-[9999] border-2 border-red-500'
+                    }
+                  >
+                    <ReadingTimeCounter />
+                  </div>
+                )}
               <BrowserRouter>
               <Routes>
             <Route path="/" element={<Auth />} />
@@ -150,6 +165,12 @@ const App = () => {
             <Route path="/about" element={
               <ProtectedRoute>
                 <AboutPage />
+                <BottomNavigation />
+              </ProtectedRoute>
+            } />
+            <Route path="/favorites" element={
+              <ProtectedRoute>
+                <Favorites />
                 <BottomNavigation />
               </ProtectedRoute>
             } />

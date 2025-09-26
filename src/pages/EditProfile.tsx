@@ -6,7 +6,10 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ArrowLeft, User, Mail, Calendar as CalendarIcon, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { auth, db } from "../firebase";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+// Removed Firebase Storage import, using base64 in Firestore instead
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -17,11 +20,36 @@ const EditProfile = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
   const [profile, setProfile] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
+    displayName: "",
+    email: "",
     dateOfBirth: new Date("1990-01-01"),
-    location: "New York, USA"
+    location: "",
+  photoURL: "",
+  photoBase64: ""
   });
+  const [loading, setLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (!auth.currentUser) return;
+      const userDoc = doc(db, "users", auth.currentUser.uid);
+      const userSnap = await getDoc(userDoc);
+      if (userSnap.exists()) {
+        const data = userSnap.data();
+        setProfile({
+          displayName: data.displayName || "",
+          email: data.email || "",
+          dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : new Date("1990-01-01"),
+          location: data.location || "",
+          photoURL: data.photoURL || "",
+          photoBase64: data.photoBase64 || ""
+        });
+      }
+      setLoading(false);
+    };
+    fetchUser();
+  }, []);
   const [locationSearch, setLocationSearch] = useState("");
   const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
 
@@ -37,17 +65,28 @@ const EditProfile = () => {
     location.toLowerCase().includes(locationSearch.toLowerCase())
   );
 
-  const handleSave = () => {
-    // Play save sound
-    const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmQdBjaM0+7MeSUIJXPE6+OHNwgZY7zs550NBBMApddSuSU');
-    audio.play().catch(() => {}); // Ignore any errors
-    
-    // Save profile logic here
-    toast({
-      title: t('success'),
-      description: t('profileUpdated'),
-    });
-    navigate(-1);
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      if (!auth.currentUser) return;
+      const userDoc = doc(db, "users", auth.currentUser.uid);
+      await updateDoc(userDoc, {
+        displayName: profile.displayName,
+        email: profile.email,
+        dateOfBirth: profile.dateOfBirth.toISOString(),
+        location: profile.location,
+        photoURL: profile.photoURL,
+        photoBase64: profile.photoBase64
+      });
+      toast({
+        title: t('success'),
+        description: t('profileUpdated'),
+      });
+      navigate(-1);
+    } catch (e) {
+      toast({ title: "Error", description: "Failed to update profile." });
+    }
+    setLoading(false);
   };
 
   const handleLocationChange = (value: string) => {
@@ -80,12 +119,41 @@ const EditProfile = () => {
             <CardTitle>{t('personalInfo')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Profile Avatar */}
+            {/* Profile Avatar & Photo Upload */}
             <div className="flex items-center gap-4">
-              <div className="w-20 h-20 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-2xl font-bold">
-                JD
-              </div>
-              <Button variant="outline">{t('changePhoto')}</Button>
+              {profile.photoBase64 ? (
+                <img src={profile.photoBase64} alt="Profile" className="w-20 h-20 rounded-full object-cover" />
+              ) : profile.photoURL ? (
+                <img src={profile.photoURL} alt="Profile" className="w-20 h-20 rounded-full object-cover" />
+              ) : (
+                <div className="w-20 h-20 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-2xl font-bold">
+                  {profile.displayName ? profile.displayName.split(' ').map(n => n[0]).join('') : 'JD'}
+                </div>
+              )}
+              <Button variant="outline" onClick={() => { if (fileInputRef.current) fileInputRef.current.click(); }} disabled={loading}>{t('changePhoto')}</Button>
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onClick={e => { e.stopPropagation(); }}
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  setLoading(true);
+                  try {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      setProfile(prev => ({ ...prev, photoBase64: reader.result as string }));
+                      setLoading(false);
+                    };
+                    reader.readAsDataURL(file);
+                  } catch (err) {
+                    toast({ title: "Error", description: "Failed to upload photo." });
+                    setLoading(false);
+                  }
+                }}
+              />
             </div>
 
             {/* Form Fields */}
@@ -96,10 +164,11 @@ const EditProfile = () => {
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     id="name"
-                    value={profile.name}
-                    onChange={(e) => setProfile(prev => ({ ...prev, name: e.target.value }))}
+                    value={profile.displayName}
+                    onChange={(e) => setProfile(prev => ({ ...prev, displayName: e.target.value }))}
                     className="pl-10"
                     placeholder="Enter your full name"
+                    autoComplete="off"
                   />
                 </div>
               </div>
@@ -115,6 +184,7 @@ const EditProfile = () => {
                     onChange={(e) => setProfile(prev => ({ ...prev, email: e.target.value }))}
                     className="pl-10"
                     placeholder="Enter your email"
+                    autoComplete="off"
                   />
                 </div>
               </div>
@@ -156,7 +226,10 @@ const EditProfile = () => {
                   <Input
                     id="location"
                     value={locationSearch || profile.location}
-                    onChange={(e) => handleLocationChange(e.target.value)}
+                    onChange={(e) => {
+                      handleLocationChange(e.target.value);
+                      setProfile(prev => ({ ...prev, location: e.target.value }));
+                    }}
                     onFocus={() => setShowLocationSuggestions(true)}
                     onBlur={() => setTimeout(() => setShowLocationSuggestions(false), 150)}
                     className="pl-10"
@@ -180,8 +253,8 @@ const EditProfile = () => {
             </div>
 
             <div className="flex gap-3 pt-4">
-              <Button onClick={handleSave} className="flex-1">
-                {t('saveChanges')}
+              <Button onClick={handleSave} className="flex-1" disabled={loading}>
+                {loading ? 'Saving...' : t('saveChanges')}
               </Button>
               <Button variant="outline" onClick={() => navigate(-1)} className="flex-1">
                 {t('cancel')}
