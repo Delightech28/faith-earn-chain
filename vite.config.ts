@@ -34,6 +34,9 @@ export default defineConfig(({ mode }) => ({
         }),
         NodeModulesPolyfillPlugin(),
       ],
+      define: {
+        'process.env': '{}',
+      },
     },
   },
 }));
