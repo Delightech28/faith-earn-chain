@@ -8,6 +8,7 @@ import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfil
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  base: '/faith-earn-chain/',
   server: {
     host: "::",
     port: 8080,
