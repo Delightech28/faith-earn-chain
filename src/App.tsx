@@ -66,11 +66,7 @@ const App = () => {
                 !window.location.pathname.startsWith('/auth') &&
                 !['/profile', '/wallet', '/leaderboard'].includes(window.location.pathname) && (
                   <div
-                    className={
-                      window.location.pathname === '/wallet'
-                        ? 'fixed top-20 right-4 z-[9999] border-2 border-red-500'
-                        : 'fixed top-4 right-4 z-[9999] border-2 border-red-500'
-                    }
+                    className={'fixed top-4 right-4 z-[9999] border-2 border-red-500'}
                   >
                     <ReadingTimeCounter />
                   </div>

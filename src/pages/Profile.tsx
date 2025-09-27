@@ -151,9 +151,6 @@ const Profile = () => {
                 <h2 className="text-xl font-semibold">{userData?.displayName || "John Doe"}</h2>
                 <p className="text-muted-foreground">{userData?.email || "john.doe@example.com"}</p>
                 <div className="flex flex-col items-start gap-1 mt-1">
-                  <Badge variant="default">
-                    <span className="text-xs">{userStats.currentTier} Member</span>
-                  </Badge>
                   <Badge variant="secondary">
                     <Calendar className="w-3 h-3 mr-1" />
                     <span className="text-xs">Joined {userStats.joinDate}</span>
@@ -174,13 +171,6 @@ const Profile = () => {
             </CardContent>
           </Card>
           
-          <Card>
-            <CardContent className="p-4 text-center">
-              <Award className="w-8 h-8 mx-auto mb-2 text-yellow-500" />
-              <p className="text-2xl font-bold">{userStats.totalTokensEarned}</p>
-              <p className="text-sm text-muted-foreground">Tokens Earned</p>
-            </CardContent>
-          </Card>
           
           <Card>
             <CardContent className="p-4 text-center">

@@ -1,8 +1,4 @@
 import ReadingTimeCounter from "@/components/ReadingTimeCounter";
-      {/* Reading Time Counter (fixed at top right) */}
-      <div className="fixed top-20 right-4 z-[100]">
-        <ReadingTimeCounter />
-      </div>
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +11,11 @@ import { auth, db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+
+      {/* Reading Time Counter (fixed at top right) */}
+      <div className="fixed top-20 right-4 z-[100]">
+        <ReadingTimeCounter />
+      </div>
 
 const mockTransactions = [
   { id: 1, type: "earned", amount: 5, description: "Bible reading - 50 minutes", date: "2024-01-15" },
@@ -99,6 +100,25 @@ const Wallet = () => {
   return (
     <div className="min-h-screen bg-background p-4 pb-20">
       <div className="max-w-4xl mx-auto space-y-6">
+        {/* Tokens container above transaction history */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Tokens</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="font-medium">AVAX</span>
+                <span className="font-mono text-base">{avaxBalance !== null ? `${avaxBalance} AVAX` : '...'}</span>
+              </div>
+              {/* Add more tokens here if needed, e.g. ERC20 */}
+              {/* <div className="flex items-center justify-between">
+                <span className="font-medium">FAITH</span>
+                <span className="font-mono text-base">0 FAITH</span>
+              </div> */}
+            </div>
+          </CardContent>
+        </Card>
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-foreground">{t('myWallet')}</h1>
           <button
@@ -124,7 +144,6 @@ const Wallet = () => {
                 <p className="text-3xl font-bold text-foreground">
                   {avaxBalance !== null ? `${avaxBalance} AVAX` : '...'}
                 </p>
-                <p className="text-muted-foreground">Fuji Testnet</p>
               </div>
               <div className="flex gap-3">
                 <Button className="flex items-center gap-2" onClick={() => setShowSend(true)}>
@@ -234,30 +253,7 @@ const Wallet = () => {
         )}
 
         {/* Stats */}
-        <div className="grid grid-cols-2 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-green-500" />
-                <div>
-                  <p className="font-semibold">{totalEarned} FC</p>
-                  <p className="text-sm text-muted-foreground">{t('totalEarned')}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <WalletIcon className="w-5 h-5 text-blue-500" />
-                <div>
-                  <p className="font-semibold">Gold</p>
-                  <p className="text-sm text-muted-foreground">{t('tierStatus')}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Stats grid removed as all cards were deleted */}
 
         {/* Transaction History */}
         <Card>
@@ -283,6 +279,17 @@ const Wallet = () => {
         </Card>
 
         {/* Wallet Address */}
+        {/* Token Balance */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Tokens</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl font-bold text-foreground">{totalEarned} FC</span>
+            </div>
+          </CardContent>
+        </Card>
         <Card>
           <CardHeader>
             <CardTitle>{t('walletAddress')}</CardTitle>
@@ -310,20 +317,37 @@ const Wallet = () => {
             <div className="bg-background rounded-lg shadow-lg p-6 max-w-md w-full">
               <h2 className="text-lg font-bold mb-2">Your Wallet Mnemonic</h2>
               <div className="relative mb-4">
-                <div className="p-3 bg-muted rounded-lg flex items-center justify-between gap-3 min-h-[48px]">
-                  <p className="font-mono text-sm break-words flex-1 select-all">{mnemonic || "No mnemonic found."}</p>
+                {/* Responsive: stack vertically on small screens, inline on md+ */}
+                <div className="p-3 bg-muted rounded-lg flex flex-col gap-2 min-h-[48px]">
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       if (mnemonic) {
-                        navigator.clipboard.writeText(mnemonic);
-                        toast({ description: 'Mnemonic copied!', duration: 2000 });
+                        try {
+                          await navigator.clipboard.writeText(mnemonic);
+                          toast({ description: 'Mnemonic copied!', duration: 2000 });
+                        } catch (err) {
+                          // Fallback for older browsers
+                          const textarea = document.createElement('textarea');
+                          textarea.value = mnemonic;
+                          document.body.appendChild(textarea);
+                          textarea.select();
+                          try {
+                            document.execCommand('copy');
+                            toast({ description: 'Mnemonic copied!', duration: 2000 });
+                          } catch (err2) {
+                            toast({ description: 'Copy failed. Please copy manually.', duration: 2000 });
+                          }
+                          document.body.removeChild(textarea);
+                        }
                       }
                     }}
-                    className="p-2 hover:bg-accent rounded-md transition-colors flex-shrink-0 absolute top-2 right-2"
+                    className="w-full p-3 bg-accent text-accent-foreground rounded-md flex items-center justify-center gap-2 text-base font-medium mb-2 md:mb-0 md:w-auto md:self-auto md:absolute md:top-2 md:right-2"
                     title="Copy mnemonic"
                   >
-                    <Copy className="w-4 h-4" />
+                    <Copy className="w-5 h-5" />
+                    <span>Copy Mnemonic</span>
                   </button>
+                  <p className="font-mono text-sm break-words select-all w-full text-center md:text-left">{mnemonic || "No mnemonic found."}</p>
                 </div>
               </div>
               <Button className="w-full" onClick={() => setShowMnemonic(false)}>Close</Button>
