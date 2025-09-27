@@ -1,3 +1,4 @@
+import nodePolyfills from 'rollup-plugin-node-polyfills';
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
@@ -38,5 +39,14 @@ export default defineConfig(({ mode }) => ({
         'process.env': '{}',
       },
     },
+  },
+  define: {
+    'process.env': '{}',
+  },
+  build: {
+    rollupOptions: {
+      // Node polyfills removed due to Vite plugin incompatibility
+      plugins: []
+    }
   },
 }));
