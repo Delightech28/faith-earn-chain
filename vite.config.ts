@@ -46,6 +46,7 @@ export default defineConfig(({ mode }) => ({
     'process': '{}',
   },
   build: {
+    sourcemap: true,
     rollupOptions: {
       // Node polyfills removed due to Vite plugin incompatibility
       plugins: []
