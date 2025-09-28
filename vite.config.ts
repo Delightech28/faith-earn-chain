@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => ({
       buffer: 'buffer',
       process: 'process/browser',
       util: 'util',
-      stream: 'stream-browserify',
+      // stream polyfill removed
     },
   },
   optimizeDeps: {
