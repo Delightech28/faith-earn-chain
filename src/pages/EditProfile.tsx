@@ -235,9 +235,9 @@ const EditProfile = () => {
                     className="pl-10"
                     placeholder="Enter your location"
                   />
-                  {showLocationSuggestions && filteredLocations.length > 0 && (
+                  {showLocationSuggestions && (filteredLocations?.length > 0) && (
                     <div className="absolute top-full left-0 right-0 bg-background border border-border rounded-md shadow-lg max-h-48 overflow-y-auto z-20">
-                      {filteredLocations.slice(0, 6).map((location, index) => (
+                      {(filteredLocations || []).slice(0, 6).map((location, index) => (
                         <div
                           key={index}
                           className="p-2 hover:bg-accent cursor-pointer text-sm"
