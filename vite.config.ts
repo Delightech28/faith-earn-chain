@@ -21,30 +21,11 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      buffer: 'buffer',
-      process: 'process/browser',
-      util: 'util',
-      // stream polyfill removed
+      // All Node.js polyfills removed for clean browser build
     },
   },
-  optimizeDeps: {
-    esbuildOptions: {
-      plugins: [
-        NodeGlobalsPolyfillPlugin({
-          process: true,
-          buffer: true,
-        }),
-        NodeModulesPolyfillPlugin(),
-      ],
-      define: {
-        'process.env': '{}',
-      },
-    },
-  },
-  define: {
-    'process.env': '{}',
-    'process': '{}',
-  },
+  // Node.js polyfills removed from optimizeDeps
+  // Node.js polyfills removed from define
   build: {
     sourcemap: true,
     rollupOptions: {
